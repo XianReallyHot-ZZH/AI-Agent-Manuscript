@@ -361,6 +361,129 @@ AI Agent 技术分享 HTML Slides
       letter-spacing: 0;
     }
 
+    .arch-diagram {
+      border: 1px solid var(--line);
+      background: rgba(250, 249, 245, 0.035);
+      border-radius: 8px;
+      padding: 22px;
+      margin-top: 20px;
+    }
+
+    .diagram-row {
+      display: grid;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .diagram-row.cols-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .diagram-row.cols-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .diagram-row.cols-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .diagram-row.spaced {
+      margin-top: 14px;
+    }
+
+    .bridge-row {
+      display: grid;
+      grid-template-columns: 1fr 34px 1fr 34px 1fr 34px 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .bridge-row.five {
+      grid-template-columns: 1fr 34px 1fr 34px 1fr 34px 1fr 34px 1fr;
+    }
+
+    .diagram-node {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 16px 16px;
+      min-height: 118px;
+    }
+
+    .diagram-node.small {
+      min-height: 92px;
+      padding: 14px 14px;
+    }
+
+    .diagram-node.primary {
+      border-color: var(--accent);
+      box-shadow: inset 0 0 0 1px rgba(250, 249, 245, 0.04);
+    }
+
+    .diagram-node .node-title {
+      font-family: var(--font-heading);
+      color: var(--accent);
+      font-size: 0.58em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .diagram-node p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.56em;
+      line-height: 1.42;
+    }
+
+    .diagram-arrow {
+      font-family: var(--font-heading);
+      color: var(--accent);
+      font-size: 0.82em;
+      text-align: center;
+    }
+
+    .diagram-caption {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.58em;
+      line-height: 1.42;
+    }
+
+    .layer-stack {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .layer-row {
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .layer-label,
+    .layer-body {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 13px 15px;
+      min-height: 62px;
+    }
+
+    .layer-label {
+      font-family: var(--font-heading);
+      color: var(--accent);
+      font-size: 0.58em;
+      font-weight: 600;
+    }
+
+    .layer-body {
+      color: var(--muted);
+      font-size: 0.56em;
+      line-height: 1.42;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -565,11 +688,47 @@ AI Agent 技术分享 HTML Slides
       .layout-4,
       .metric-row,
       .principle-grid,
-      .flow-strip {
+      .flow-strip,
+      .bridge-row,
+      .bridge-row.five,
+      .layer-row {
+        grid-template-columns: 1fr;
+      }
+      .diagram-row,
+      .diagram-row.cols-2,
+      .diagram-row.cols-3,
+      .diagram-row.cols-4 {
         grid-template-columns: 1fr;
       }
       .flow-step:after {
         display: none;
+      }
+      .diagram-arrow {
+        transform: rotate(90deg);
+      }
+      .arch-diagram {
+        padding: 12px;
+        margin-top: 12px;
+      }
+      .diagram-node,
+      .diagram-node.small {
+        min-height: 48px;
+        padding: 10px 10px;
+      }
+      .diagram-node .node-title,
+      .layer-label {
+        font-size: 0.5em;
+      }
+      .diagram-node p,
+      .layer-body,
+      .diagram-caption {
+        font-size: 0.46em;
+        line-height: 1.28;
+      }
+      .layer-label,
+      .layer-body {
+        min-height: 42px;
+        padding: 9px 10px;
       }
       .code-title {
         flex-direction: column;
@@ -706,6 +865,43 @@ AI Agent 技术分享 HTML Slides
         </aside>
       </section>
 
+      <section data-part="1">
+        <h2>先给一张总图：所有机制都挂在这条链路上</h2>
+        <div class="arch-diagram">
+          <div class="bridge-row five">
+            <div class="diagram-node small primary">
+              <div class="node-title">User / Channel</div>
+              <p>用户目标、平台事件、会话身份和约束。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small">
+              <div class="node-title">Gateway</div>
+              <p>标准化消息，找到应该响应的 Agent。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small primary">
+              <div class="node-title">Harness</div>
+              <p>组织上下文、工具、权限、记忆和恢复。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small">
+              <div class="node-title">Model</div>
+              <p>基于上下文选择回答、调用工具或继续探索。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small primary">
+              <div class="node-title">World</div>
+              <p>文件、Shell、数据库、外部服务和平台投递。</p>
+            </div>
+          </div>
+          <div class="diagram-caption">从左到右是一次消息进入系统的主路径；从右回到中间的是工具结果、投递状态和外部事实，下一轮再被 Harness 放回上下文。</div>
+        </div>
+        <div class="takeaway"><strong>后面听到任何机制，都先问它在图里的位置。</strong>Todo、Skill、Memory 是 Harness 的信息组织；Permission、WAL、Recovery 是 Harness 对 World 的风险控制。</div>
+        <aside class="notes">
+          这是全场的地图。后续每个部分都可以回到这张图：Part 2 讲 Harness/Model/World，Part 3 讲 Harness 内的信息管理，Part 4 讲风险控制，Part 5 讲 Gateway 和多 Agent。
+        </aside>
+      </section>
+
       <section data-part="2" class="chapter">
         <div class="eyebrow">Part 2 / Core Architecture</div>
         <h2>Agent 的本质：可行动的循环</h2>
@@ -783,6 +979,44 @@ AI Agent 技术分享 HTML Slides
         <div class="takeaway"><strong>这页只承担一个任务：</strong>把前一页的“循环职责”落到源码上，证明最小 Loop 很短，复杂度来自 Loop 周边的扩展点。</div>
         <aside class="notes">
           紧贴核心循环展示，帮助听众把抽象循环和真实代码对上。
+        </aside>
+      </section>
+
+      <section data-part="2">
+        <h2>最小 Loop 怎么长成系统？看四个扩展点</h2>
+        <div class="arch-diagram">
+          <div class="diagram-row cols-4">
+            <div class="diagram-node primary">
+              <div class="node-title">Build Context</div>
+              <p>加入历史、计划、技能摘要、记忆检索和运行时约束。</p>
+            </div>
+            <div class="diagram-node">
+              <div class="node-title">Call Model</div>
+              <p>保持协议小：模型只需要表达回答、工具请求或停止。</p>
+            </div>
+            <div class="diagram-node primary">
+              <div class="node-title">Tool Boundary</div>
+              <p>Schema、Permission、Hook、Handler 都发生在副作用之前。</p>
+            </div>
+            <div class="diagram-node">
+              <div class="node-title">Result Re-entry</div>
+              <p>工具结果、错误和恢复信息回写，成为下一轮事实。</p>
+            </div>
+          </div>
+          <div class="layer-stack">
+            <div class="layer-row">
+              <div class="layer-label">横向扩展</div>
+              <div class="layer-body">增加工具、渠道、MCP、子 Agent，但都不改变 Loop 的基本节奏。</div>
+            </div>
+            <div class="layer-row">
+              <div class="layer-label">纵向增强</div>
+              <div class="layer-body">在上下文、权限、恢复、审计上加层，让每一轮更可控、更可恢复。</div>
+            </div>
+          </div>
+        </div>
+        <div class="takeaway"><strong>这张图解释“为什么最小代码不等于简单系统”。</strong>Loop 本身短，是因为复杂度被放到了四个明确扩展点上。</div>
+        <aside class="notes">
+          用这页把 5 行 agentLoop 和后面几十个机制连接起来，避免听众觉得后续内容是突然冒出来的功能清单。
         </aside>
       </section>
 
@@ -907,6 +1141,37 @@ static {
       </section>
 
       <section data-part="2">
+        <h2>一次 Tool 调用，其实经过四道门</h2>
+        <div class="arch-diagram">
+          <div class="bridge-row">
+            <div class="diagram-node primary">
+              <div class="node-title">1. 让模型看懂</div>
+              <p>Schema 描述工具名、能力边界、输入结构和使用时机。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node">
+              <div class="node-title">2. 让系统判断</div>
+              <p>Policy 根据工具、路径、命令、用户和上下文决定 allow、ask、deny。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node primary">
+              <div class="node-title">3. 让世界执行</div>
+              <p>Handler 读写文件、运行 Shell、调用 MCP 或投递外部消息。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node">
+              <div class="node-title">4. 让模型继续</div>
+              <p>tool_result 把事实、错误、权限拒绝和恢复建议回写上下文。</p>
+            </div>
+          </div>
+        </div>
+        <div class="takeaway"><strong>Tool 的关键不是“能不能调函数”。</strong>关键是每次副作用都有契约、策略、执行和反馈四个位置可以治理。</div>
+        <aside class="notes">
+          这页把 Tool 的 Schema、Policy、Handler、tool_result 串成一条治理链，帮助听众理解为什么后面会出现权限、Hook、MCP。
+        </aside>
+      </section>
+
+      <section data-part="2">
         <h2>Context 是 Agent 的工作记忆，不只是聊天记录</h2>
         <div class="layout-4">
           <div class="panel tight"><h3>目标</h3><p>用户到底要完成什么。</p></div>
@@ -990,6 +1255,47 @@ static {
         <div class="takeaway"><strong>可用性的核心不是加更多工具。</strong>它是持续降低模型每一轮的认知负担。</div>
         <aside class="notes">
           用三角模型承接 Part 3 后续机制，让听众先知道这些机制之间的关系。
+        </aside>
+      </section>
+
+      <section data-part="3">
+        <h2>信息生命周期：不是塞 prompt，而是让信息流动</h2>
+        <div class="arch-diagram">
+          <div class="bridge-row five">
+            <div class="diagram-node small primary">
+              <div class="node-title">External State</div>
+              <p>文件、任务、渠道事件、工具输出。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small">
+              <div class="node-title">Select</div>
+              <p>按当前目标筛出必要事实和知识目录。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small primary">
+              <div class="node-title">Working Context</div>
+              <p>模型这一轮真正能看到的信息。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small">
+              <div class="node-title">Compress</div>
+              <p>窗口压力出现时，把历史重写成交接摘要。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small primary">
+              <div class="node-title">Recall</div>
+              <p>后续按任务重新检索、注入、继续工作。</p>
+            </div>
+          </div>
+          <div class="diagram-row cols-3 spaced">
+            <div class="diagram-node small"><div class="node-title">Todo</div><p>把任务进度从隐式记忆变成外部状态。</p></div>
+            <div class="diagram-node small"><div class="node-title">Skill</div><p>先给目录，需要时再加载正文。</p></div>
+            <div class="diagram-node small"><div class="node-title">Subagent</div><p>把高噪声探索隔离，只带回摘要。</p></div>
+          </div>
+        </div>
+        <div class="takeaway"><strong>Part 3 的主线是信息工程。</strong>计划、技能、子 Agent、压缩和 Channel 都是在控制“什么信息以什么形态进入下一轮”。</div>
+        <aside class="notes">
+          这页把 Part 3 的机制合成一张信息流图，给后面的 Todo、Skill、Subagent、Compact 做共同解释框架。
         </aside>
       </section>
 
@@ -1180,6 +1486,43 @@ static {
         <div class="takeaway"><strong>Agent 越能行动，越需要工程刹车。</strong>没有这些底线，智能越强，事故半径越大。</div>
         <aside class="notes">
           这页是生产部分的总纲。
+        </aside>
+      </section>
+
+      <section data-part="4">
+        <h2>生产可靠性：把失败关进可恢复链路</h2>
+        <div class="arch-diagram">
+          <div class="bridge-row five">
+            <div class="diagram-node small primary">
+              <div class="node-title">Risky Intent</div>
+              <p>模型想写文件、跑命令、发消息或访问外部服务。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small">
+              <div class="node-title">Guard</div>
+              <p>权限、Hook、输入校验先判断能不能做。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small primary">
+              <div class="node-title">Durable State</div>
+              <p>关键操作先落盘，留下 pending、attempt 和 trace。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small">
+              <div class="node-title">Execute</div>
+              <p>真正触达文件系统、渠道、模型 API 或外部服务。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small primary">
+              <div class="node-title">Recover</div>
+              <p>失败时退避、压缩、重试、降级或人工升级。</p>
+            </div>
+          </div>
+          <div class="diagram-caption">生产系统不是追求“没有失败”，而是让失败发生在已知状态之间，系统能知道上一步做到哪里、下一步该怎么补偿。</div>
+        </div>
+        <div class="takeaway"><strong>可靠性链路把四件事串起来：</strong>权限控制事故入口，持久化保留恢复点，投递和恢复处理外部不确定性，并发控制状态污染。</div>
+        <aside class="notes">
+          这页把生产级底线合成一条失败治理链路，再展开权限、恢复、投递、并发就不会显得零散。
         </aside>
       </section>
 
@@ -1443,6 +1786,40 @@ static {
         <div class="takeaway"><strong>多 Agent 不只是通信。</strong>消息、任务、代码三条线任意一条没有边界，协作都会变成随机交错。</div>
         <aside class="notes">
           这页解释后面的 JSONL 邮箱、握手协议和 Worktree 是怎样互相补位的。
+        </aside>
+      </section>
+
+      <section data-part="5">
+        <h2>多 Agent 边界图：消息、任务、代码不能混在一起</h2>
+        <div class="arch-diagram">
+          <div class="diagram-row cols-3">
+            <div class="diagram-node primary">
+              <div class="node-title">Message Boundary</div>
+              <p>JSONL inbox、ack、timeout、shutdown 协议，解决“谁对谁说了什么”。</p>
+            </div>
+            <div class="diagram-node">
+              <div class="node-title">Task Boundary</div>
+              <p>任务认领、计划批准、状态交接，解决“谁负责做到什么程度”。</p>
+            </div>
+            <div class="diagram-node primary">
+              <div class="node-title">Code Boundary</div>
+              <p>worktree、文件所有权、审查合并，解决“谁能改哪里”。</p>
+            </div>
+          </div>
+          <div class="layer-stack">
+            <div class="layer-row">
+              <div class="layer-label">Agent A</div>
+              <div class="layer-body">只直接修改自己的上下文、任务状态和隔离工作区；跨边界必须发消息或提交变更。</div>
+            </div>
+            <div class="layer-row">
+              <div class="layer-label">Agent B</div>
+              <div class="layer-body">通过协议接收任务和证据，不依赖对方的隐式记忆，也不直接共享可变状态。</div>
+            </div>
+          </div>
+        </div>
+        <div class="takeaway"><strong>多 Agent 的核心原则是少共享、强协议。</strong>能追加消息就不要共享内存，能隔离目录就不要同时改主工作区。</div>
+        <aside class="notes">
+          这页把 JSONL 邮箱、协议和 Worktree 三页放在同一张边界图里，降低听众对多 Agent 的抽象感。
         </aside>
       </section>
 
