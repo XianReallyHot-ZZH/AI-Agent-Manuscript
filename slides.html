@@ -781,6 +781,31 @@ AI Agent 技术分享 HTML Slides
       </section>
 
       <section data-part="2">
+        <h2>把一次 Agent Turn 拆开看，就没那么抽象了</h2>
+        <div class="layout-2">
+          <div class="panel">
+            <h3>用户说</h3>
+            <p>“这个测试失败了，帮我修一下。” 这句话本身还不够，模型还需要知道仓库结构、失败日志、可用工具和权限边界。</p>
+          </div>
+          <div class="panel">
+            <h3>系统做</h3>
+            <p>Harness 把这些信息组织成上下文，模型选择 read_file 或 bash，工具结果再被回写为下一轮事实。</p>
+          </div>
+        </div>
+        <div class="flow-strip compact">
+          <div class="flow-step"><div class="step-title">Goal</div><p>用户目标进入 messages。</p></div>
+          <div class="flow-step"><div class="step-title">Inspect</div><p>模型请求读文件或跑测试。</p></div>
+          <div class="flow-step"><div class="step-title">Evidence</div><p>工具返回日志和源码片段。</p></div>
+          <div class="flow-step"><div class="step-title">Patch</div><p>模型基于新事实选择编辑。</p></div>
+          <div class="flow-step"><div class="step-title">Verify</div><p>再次跑测试，直到能交付。</p></div>
+        </div>
+        <div class="takeaway"><strong>听众要记住：</strong>Agent 的“推理”不是一次性发生的，而是在多轮工具反馈里逐步收敛。</div>
+        <aside class="notes">
+          这页用一个熟悉的修测试例子，把 Loop 讲成具体故事，降低抽象感。
+        </aside>
+      </section>
+
+      <section data-part="2">
         <h2>Tool 不是函数列表，而是控制面 + 执行面</h2>
         <div class="layout-2">
           <div class="panel">
@@ -816,6 +841,25 @@ AI Agent 技术分享 HTML Slides
         </div>
         <aside class="notes">
           这页也改成静态 HTML 流程图，减少演示时 Mermaid 失败面。
+        </aside>
+      </section>
+
+      <section data-part="2">
+        <h2>为什么 Tool 要拆成 Schema 和 Handler？</h2>
+        <table>
+          <thead>
+            <tr><th>如果混在一起</th><th>拆开以后</th><th>架构收益</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>模型看不懂工具边界</td><td>Schema 面向模型描述能力</td><td>模型更容易选对工具</td></tr>
+            <tr><td>权限只能散落在函数里</td><td>Policy Gate 统一拦截 tool_use</td><td>危险操作有统一入口</td></tr>
+            <tr><td>工具实现难以替换</td><td>Handler 面向系统执行副作用</td><td>教学版 Map、生产版注入都能承载</td></tr>
+            <tr><td>错误反馈不稳定</td><td>tool_result 统一回到上下文</td><td>模型能基于同一种反馈继续推理</td></tr>
+          </tbody>
+        </table>
+        <div class="takeaway"><strong>这不是过度设计。</strong>只要工具会改变外部世界，控制面和执行面分离就是最小安全边界。</div>
+        <aside class="notes">
+          这页把“控制面/执行面”从术语展开成工程收益。
         </aside>
       </section>
 
@@ -874,6 +918,35 @@ AI Agent 技术分享 HTML Slides
         <div class="takeaway"><strong>所以项目课程不是在堆 feature。</strong>它们是在逐步补齐一个能长期工作的运行系统。</div>
         <aside class="notes">
           这页解释为什么从 S03 开始会出现 Todo、Skill、Context Compact 等机制。
+        </aside>
+      </section>
+
+      <section data-part="3">
+        <h2>可用智能体的三角：计划、知识、上下文</h2>
+        <div class="layout-3">
+          <div class="panel">
+            <h3>计划</h3>
+            <p>让模型知道“现在做到哪一步”，避免在长任务中反复换方向。</p>
+          </div>
+          <div class="panel">
+            <h3>知识</h3>
+            <p>让模型知道“有什么可用知识”，但只在需要时加载细节。</p>
+          </div>
+          <div class="panel">
+            <h3>上下文</h3>
+            <p>让模型看到“当前最重要事实”，并在窗口限制下继续工作。</p>
+          </div>
+        </div>
+        <div class="flow-strip compact">
+          <div class="flow-step"><div class="step-title">TodoWrite</div><p>把进度外化。</p></div>
+          <div class="flow-step"><div class="step-title">Skill</div><p>把知识分层。</p></div>
+          <div class="flow-step"><div class="step-title">Subagent</div><p>把探索隔离。</p></div>
+          <div class="flow-step"><div class="step-title">Compact</div><p>把历史重写。</p></div>
+          <div class="flow-step"><div class="step-title">Channel</div><p>把输入标准化。</p></div>
+        </div>
+        <div class="takeaway"><strong>可用性的核心不是加更多工具。</strong>它是持续降低模型每一轮的认知负担。</div>
+        <aside class="notes">
+          用三角模型承接 Part 3 后续机制，让听众先知道这些机制之间的关系。
         </aside>
       </section>
 
@@ -1004,6 +1077,26 @@ AI Agent 技术分享 HTML Slides
       </section>
 
       <section data-part="3">
+        <h2>压缩前后对比：哪些信息该留下？</h2>
+        <table>
+          <thead>
+            <tr><th>历史里常见内容</th><th>压缩时怎么处理</th><th>原因</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>用户最终目标和硬约束</td><td>必须保留</td><td>这是继续工作的方向盘</td></tr>
+            <tr><td>已经验证过的事实</td><td>保留结论和来源</td><td>避免重复探索和误判</td></tr>
+            <tr><td>失败尝试和错误原因</td><td>保留关键失败模式</td><td>避免模型走回老路</td></tr>
+            <tr><td>大段工具输出和日志</td><td>摘要化，只保留异常点</td><td>节省窗口，降低噪声</td></tr>
+            <tr><td>中间闲聊和无效推理</td><td>丢弃</td><td>不帮助下一步行动</td></tr>
+          </tbody>
+        </table>
+        <div class="takeaway"><strong>Compact 的产物应该像交接文档。</strong>另一个 Agent 只看摘要，也能继续把任务做完。</div>
+        <aside class="notes">
+          这页把压缩从抽象机制变成可判断的信息筛选标准。
+        </aside>
+      </section>
+
+      <section data-part="3">
         <h2>这一层所有机制，都在回答同一个问题</h2>
         <table>
           <thead>
@@ -1044,6 +1137,36 @@ AI Agent 技术分享 HTML Slides
         <div class="takeaway"><strong>Agent 越能行动，越需要工程刹车。</strong>没有这些底线，智能越强，事故半径越大。</div>
         <aside class="notes">
           这页是生产部分的总纲。
+        </aside>
+      </section>
+
+      <section data-part="4">
+        <h2>一次生产事故，通常是链式发生的</h2>
+        <div class="flow-strip compact">
+          <div class="flow-step">
+            <div class="step-title">Tool Risk</div>
+            <p>模型请求写文件、跑命令或发消息。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Permission</div>
+            <p>危险动作先被策略拦截或要求确认。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Execution</div>
+            <p>执行失败、超时、限流或返回超大结果。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Recovery</div>
+            <p>重试、压缩、降级或保留待投递状态。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Audit</div>
+            <p>日志和 Hook 让问题能被复盘。</p>
+          </div>
+        </div>
+        <div class="takeaway"><strong>生产级架构的意义：</strong>不是保证永不失败，而是保证失败有边界、有状态、有证据。</div>
+        <aside class="notes">
+          用事故链路解释权限、恢复、投递、审计为什么要一起出现。
         </aside>
       </section>
 
@@ -1231,6 +1354,28 @@ AI Agent 技术分享 HTML Slides
         <div class="takeaway"><strong>多 Agent 的核心不是“更聪明”。</strong>它首先是分布式协作问题。</div>
         <aside class="notes">
           这一页为邮箱、协议、worktree 做铺垫。
+        </aside>
+      </section>
+
+      <section data-part="5">
+        <h2>从单 Agent 到团队，要分清三条线</h2>
+        <div class="layout-3">
+          <div class="panel">
+            <h3>消息线</h3>
+            <p>谁给谁发消息，消息是否可恢复，是否有 ack、timeout 和重试。</p>
+          </div>
+          <div class="panel">
+            <h3>任务线</h3>
+            <p>谁认领任务，任务状态在哪里，计划是否需要批准，失败如何交接。</p>
+          </div>
+          <div class="panel">
+            <h3>代码线</h3>
+            <p>谁能改哪些文件，并行修改如何隔离，什么时候合并回主线。</p>
+          </div>
+        </div>
+        <div class="takeaway"><strong>多 Agent 不只是通信。</strong>消息、任务、代码三条线任意一条没有边界，协作都会变成随机交错。</div>
+        <aside class="notes">
+          这页解释后面的 JSONL 邮箱、握手协议和 Worktree 是怎样互相补位的。
         </aside>
       </section>
 
