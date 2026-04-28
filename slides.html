@@ -387,43 +387,6 @@ AI Agent 技术分享 HTML Slides
       background: rgba(250, 249, 245, 0.03);
     }
 
-    .mermaid-wrap {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 18px;
-      margin-top: 12px;
-      overflow: hidden;
-    }
-
-    .mermaid {
-      text-align: center;
-      font-family: var(--font-heading);
-      font-size: 16px;
-      line-height: 1.2;
-    }
-
-    .mermaid svg {
-      display: block;
-      max-width: 100%;
-      max-height: 450px;
-      height: auto;
-      margin: 0 auto;
-    }
-
-    .mermaid svg foreignObject,
-    .mermaid .nodeLabel,
-    .mermaid .edgeLabel {
-      overflow: visible;
-    }
-
-    .mermaid .node rect,
-    .mermaid .node polygon {
-      transform-box: fill-box;
-      transform-origin: center;
-      transform: scaleX(1.12);
-    }
-
     .code-card {
       margin-top: 14px;
     }
@@ -677,14 +640,26 @@ AI Agent 技术分享 HTML Slides
             <p><strong>负责事实。</strong>文件系统、Shell、渠道、数据库、MCP 服务都在这里。</p>
           </div>
         </div>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart LR
-  User["User"] --> Harness["Harness<br/>state / policy / tools"]
-  Harness --> Model["Model<br/>reasoning + choice"]
-  Model --> Harness
-  Harness --> World["World<br/>files / shell / channels<br/>services"]
-  World --> Harness
+        <div class="flow-strip compact">
+          <div class="flow-step">
+            <div class="step-title">User</div>
+            <p>提出目标、约束和反馈。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Harness</div>
+            <p>组织状态、策略、工具和上下文。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Model</div>
+            <p>根据上下文做选择。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">World</div>
+            <p>文件、Shell、渠道、数据库和外部服务。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Back</div>
+            <p>结果回到 Harness，再进入下一轮。</p>
           </div>
         </div>
         <aside class="notes">
@@ -923,20 +898,32 @@ flowchart LR
 
       <section data-part="3">
         <h2>技能：知识要按需加载，不要一次塞满</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart LR
-  Catalog["Skill Catalog<br/>name + description"] --> Prompt["Light prompt<br/>cheap awareness"]
-  Prompt --> Need{"Need detail?"}
-  Need -->|"yes"| Load["load_skill<br/>full body"]
-  Need -->|"no"| Work["Continue task"]
-  Load --> Work
+        <div class="flow-strip compact">
+          <div class="flow-step">
+            <div class="step-title">Catalog</div>
+            <p>只注入技能名称和描述，让模型知道有什么。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Light Prompt</div>
+            <p>保持系统提示词轻，不把知识库一次塞满。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Need Detail</div>
+            <p>模型判断当前任务是否需要完整技能内容。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">load_skill</div>
+            <p>按需读取完整 body。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Continue</div>
+            <p>带着必要知识继续执行。</p>
           </div>
         </div>
         <div class="takeaway"><strong>两层知识注入的价值：</strong>先让模型知道“有什么”，只有需要时再给它“全部内容”。</div>
         <p class="source">来源：AI-Agent S05 Skill Loading</p>
         <aside class="notes">
-          这比展示 describeAvailable/loadFullText 代码更容易理解。
+          这比展示 describeAvailable/loadFullText 代码更容易理解，也避免 Mermaid 渲染依赖。
         </aside>
       </section>
 
@@ -1062,13 +1049,26 @@ flowchart LR
 
       <section data-part="4">
         <h2>权限和 Hook：在工具调用前后加护栏</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart LR
-  ToolUse["tool_use"] --> Pre["PreToolUse<br/>policy / ask / deny"]
-  Pre --> Execute["Execute Tool"]
-  Execute --> Post["PostToolUse<br/>log / observe / transform"]
-  Post --> Result["tool_result"]
+        <div class="flow-strip compact">
+          <div class="flow-step">
+            <div class="step-title">tool_use</div>
+            <p>模型表达要调用什么工具和输入。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">PreToolUse</div>
+            <p>执行前做 policy、ask、deny。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Execute</div>
+            <p>真正执行工具副作用。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">PostToolUse</div>
+            <p>记录日志、观察结果、做转换。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">tool_result</div>
+            <p>把结果送回模型上下文。</p>
           </div>
         </div>
         <div class="layout-3">
@@ -1084,17 +1084,15 @@ flowchart LR
 
       <section data-part="4">
         <h2>Prompt 组装：把人格、工具、记忆变成运行时配置</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart TD
-  Identity["Identity"] --> Soul["Soul / Style"]
-  Soul --> Tools["Tools Guide"]
-  Tools --> Skills["Skills"]
-  Skills --> Memory["Memory"]
-  Memory --> Bootstrap["Bootstrap"]
-  Bootstrap --> Runtime["Runtime State"]
-  Runtime --> Channel["Channel Hint"]
-          </div>
+        <div class="layout-4">
+          <div class="panel tight"><h3>Identity</h3><p>身份和职责边界。</p></div>
+          <div class="panel tight"><h3>Soul / Style</h3><p>人格、语气和行为准则。</p></div>
+          <div class="panel tight"><h3>Tools Guide</h3><p>工具说明和使用规则。</p></div>
+          <div class="panel tight"><h3>Skills</h3><p>按需注入的领域知识。</p></div>
+          <div class="panel tight"><h3>Memory</h3><p>跨会话召回的相关事实。</p></div>
+          <div class="panel tight"><h3>Bootstrap</h3><p>启动时的固定上下文。</p></div>
+          <div class="panel tight"><h3>Runtime</h3><p>当前运行状态。</p></div>
+          <div class="panel tight"><h3>Channel</h3><p>平台和会话提示。</p></div>
         </div>
         <div class="takeaway"><strong>系统提示词不是一段文案。</strong>在生产系统里，它更像按层装配的运行时配置。</div>
         <p class="source">来源：OpenClaw S06 Intelligence；enterprise PromptAssembler</p>
@@ -1119,16 +1117,26 @@ flowchart TD
 
       <section data-part="4">
         <h2>恢复策略：失败不是 if/else，而是分层处理</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart TD
-  Call["Call Model"] --> Auth{"Auth / Rate Limit?"}
-  Auth -->|"yes"| Rotate["Rotate profile<br/>or backoff"]
-  Auth -->|"no"| Context{"Context overflow?"}
-  Context -->|"yes"| Compact["Truncate / compact<br/>then retry"]
-  Context -->|"no"| Tool{"Tool failure?"}
-  Tool -->|"yes"| Retry["Retry tool loop<br/>with feedback"]
-  Tool -->|"no"| Done["Return"]
+        <div class="flow-strip compact">
+          <div class="flow-step">
+            <div class="step-title">Call Model</div>
+            <p>先尝试正常生成。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Auth / Rate</div>
+            <p>认证、限流、超时先做轮换或退避。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Context</div>
+            <p>上下文溢出就截断工具结果或 compact。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Tool Loop</div>
+            <p>工具失败把错误反馈给模型再重试。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Return</div>
+            <p>恢复成功后交付结果，失败则升级处理。</p>
           </div>
         </div>
         <div class="takeaway"><strong>三层重试洋葱：</strong>认证与限流、上下文恢复、工具循环，各自有不同的恢复动作。</div>
@@ -1140,23 +1148,26 @@ flowchart TD
 
       <section data-part="4">
         <h2>消息投递：先落盘，再发出去</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-sequenceDiagram
-  participant A as Agent
-  participant Q as WAL Queue
-  participant D as Disk
-  participant C as Channel
-  A->>Q: enqueue(message)
-  Q->>D: tmp write + fsync + rename
-  Q->>C: deliver
-  alt success
-    C-->>Q: ack
-    Q->>D: delete pending
-  else failure
-    C-->>Q: error
-    Q->>D: keep + retry metadata
-  end
+        <div class="flow-strip compact">
+          <div class="flow-step">
+            <div class="step-title">Agent</div>
+            <p>生成待发送消息。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">WAL Queue</div>
+            <p>先进入可恢复队列。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Disk</div>
+            <p>tmp write + fsync + atomic rename。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Channel</div>
+            <p>投递到外部平台。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Ack / Retry</div>
+            <p>成功删除 pending；失败保留重试元数据。</p>
           </div>
         </div>
         <div class="takeaway"><strong>投递系统要假设外部平台会失败。</strong>WAL 的价值是让“发没发出去”有可恢复状态。</div>
@@ -1225,15 +1236,18 @@ sequenceDiagram
 
       <section data-part="5">
         <h2>JSONL 邮箱：最小可恢复通信协议</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart LR
-  Lead["lead"] -->|"append JSONL"| AliceInbox[".team/inbox/alice.jsonl"]
-  Alice["alice"] -->|"append JSONL"| LeadInbox[".team/inbox/lead.jsonl"]
-  AliceInbox --> Alice
-  LeadInbox --> Lead
-  Alice --> Tasks["shared task state"]
-  Lead --> Tasks
+        <div class="layout-3">
+          <div class="panel">
+            <h3>Sender</h3>
+            <p>Agent 只追加消息，不直接改对方内存。</p>
+          </div>
+          <div class="panel">
+            <h3>JSONL Inbox</h3>
+            <p>每个 Agent 一个 inbox 文件，append-only、可审计、可恢复。</p>
+          </div>
+          <div class="panel">
+            <h3>Receiver</h3>
+            <p>接收方轮询 inbox，再更新自己的上下文和任务状态。</p>
           </div>
         </div>
         <div class="takeaway"><strong>JSONL 的价值不是高级。</strong>它简单、可追加、可审计、崩溃后还能继续读。</div>
@@ -1259,14 +1273,26 @@ flowchart LR
 
       <section data-part="5">
         <h2>Worktree 隔离：并行工作先隔离目录</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart TD
-  Task["Task"] --> Claim["Agent claims work"]
-  Claim --> Worktree["Create git worktree"]
-  Worktree --> Edit["Edit in isolated directory"]
-  Edit --> Review["Review / merge"]
-  Review --> Cleanup["Cleanup worktree"]
+        <div class="flow-strip compact">
+          <div class="flow-step">
+            <div class="step-title">Task</div>
+            <p>任务进入共享队列。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Claim</div>
+            <p>Agent 认领工作，明确所有权。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Worktree</div>
+            <p>创建独立目录作为工作空间。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Edit</div>
+            <p>在隔离目录里修改和验证。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Review / Merge</div>
+            <p>审查后合并，再清理 worktree。</p>
           </div>
         </div>
         <div class="takeaway"><strong>隔离不是洁癖。</strong>多个 Agent 同时改同一个仓库时，目录级隔离能显著降低冲突和误删风险。</div>
@@ -1278,14 +1304,26 @@ flowchart TD
 
       <section data-part="5">
         <h2>MCP：把外部能力接进统一工具控制面</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart LR
-  Agent["Agent Loop"] --> Router["Tool Router"]
-  Router --> Builtin["Built-in Tools"]
-  Router --> MCP["MCP Router"]
-  MCP --> Stdio["JSON-RPC 2.0<br/>over stdio"]
-  Stdio --> Server["External MCP Server"]
+        <div class="flow-strip compact">
+          <div class="flow-step">
+            <div class="step-title">Agent Loop</div>
+            <p>模型仍然只发 tool_use。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Tool Router</div>
+            <p>统一决定走内置工具还是 MCP。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">MCP Router</div>
+            <p>把工具调用翻译成协议消息。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">JSON-RPC</div>
+            <p>通过 stdio 发送 JSON-RPC 2.0。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">External Server</div>
+            <p>外部服务执行能力并返回结果。</p>
           </div>
         </div>
         <div class="takeaway"><strong>MCP 的关键价值：</strong>外部工具仍然走同一个 schema、权限、执行、结果回写链路。</div>
@@ -1297,15 +1335,26 @@ flowchart LR
 
       <section data-part="5">
         <h2>Gateway Routing：先找到 Agent，再进 Loop</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart TD
-  Msg["Inbound Message"] --> Peer["peer binding"]
-  Peer --> Guild["guild binding"]
-  Guild --> Account["account binding"]
-  Account --> Channel["channel binding"]
-  Channel --> Default["default agent"]
-  Default --> Loop["Agent Loop"]
+        <div class="flow-strip compact">
+          <div class="flow-step">
+            <div class="step-title">Inbound</div>
+            <p>标准化后的平台消息进入 Gateway。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Binding Table</div>
+            <p>按 peer、guild、account、channel、default 查找。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Resolved Agent</div>
+            <p>确定用哪个 Agent 和身份处理。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Agent Loop</div>
+            <p>进入运行时循环。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Reply Path</div>
+            <p>结果按原渠道投递回去。</p>
           </div>
         </div>
         <div class="takeaway"><strong>Gateway 的问题不是“怎么调用模型”。</strong>它首先要决定这条消息属于谁、以什么身份处理、结果发回哪里。</div>
@@ -1327,17 +1376,13 @@ flowchart TD
 
       <section data-part="6">
         <h2>从 29 个 Session 提炼成 6 层架构</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart TD
-  UX["Channels / Gateway"] --> Runtime["Agent Runtime"]
-  Runtime --> Context["Context / Memory / Skills"]
-  Runtime --> Tools["Tools / MCP"]
-  Tools --> Policy["Permission / Hooks"]
-  Runtime --> Recovery["Compact / Retry / WAL"]
-  Runtime --> Team["Teams / Worktree"]
-  Recovery --> Ops["Operations<br/>metrics / health / deployment"]
-          </div>
+        <div class="layout-3">
+          <div class="panel"><h3>Channels / Gateway</h3><p>接入多平台消息，并路由到正确 Agent。</p></div>
+          <div class="panel"><h3>Agent Runtime</h3><p>Loop、stop_reason、上下文构建和回写。</p></div>
+          <div class="panel"><h3>Context / Memory</h3><p>计划、技能、压缩、长期记忆和检索。</p></div>
+          <div class="panel"><h3>Tools / Policy</h3><p>工具控制面、执行面、权限和 Hook。</p></div>
+          <div class="panel"><h3>Recovery / Delivery</h3><p>ContextGuard、Retry、WAL、Lane Queue。</p></div>
+          <div class="panel"><h3>Teams / Operations</h3><p>多 Agent 协作、Worktree、指标、健康检查和部署。</p></div>
         </div>
         <div class="takeaway"><strong>学习顺序是线性的，系统结构是分层的。</strong>不要把课程顺序误认为架构边界。</div>
         <aside class="notes">
@@ -1525,7 +1570,6 @@ static {
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/highlight/highlight.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/notes/notes.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.3/dist/mermaid.min.js"></script>
   <script>
     const partNames = {
       "1": "建立直觉",
@@ -1578,21 +1622,6 @@ static {
 
     annotateSlides();
 
-    async function renderMermaidDiagrams() {
-      if (document.fonts) {
-        const fontsReady = document.fonts.ready;
-        if (fontsReady) {
-          try {
-            await fontsReady;
-          } catch (error) {
-            console.warn("Font readiness check failed before Mermaid render.", error);
-          }
-        }
-      }
-      await mermaid.run({ querySelector: ".mermaid" });
-      Reveal.layout();
-    }
-
     Reveal.initialize({
       hash: true,
       controls: true,
@@ -1609,36 +1638,7 @@ static {
         escapeHTML: false
       }
     }).then(function() {
-      mermaid.initialize({
-        startOnLoad: false,
-        securityLevel: "loose",
-        theme: "dark",
-        themeVariables: {
-          background: "#141413",
-          primaryColor: "#1a1a18",
-          primaryTextColor: "#faf9f5",
-          primaryBorderColor: "#d97757",
-          lineColor: "#b0aea5",
-          secondaryColor: "#20201d",
-          tertiaryColor: "#1a1a18",
-          fontFamily: "Poppins, PingFang SC, sans-serif",
-          fontSize: "16px"
-        },
-        flowchart: {
-          htmlLabels: true,
-          nodeSpacing: 42,
-          rankSpacing: 48,
-          padding: 14,
-          useMaxWidth: true
-        },
-        sequence: {
-          useMaxWidth: true,
-          mirrorActors: false
-        }
-      });
-      renderMermaidDiagrams().then(function() {
-        updateProgress({ currentSlide: Reveal.getCurrentSlide() });
-      });
+      updateProgress({ currentSlide: Reveal.getCurrentSlide() });
     });
 
     Reveal.on("slidechanged", updateProgress);
