@@ -766,6 +766,26 @@ AI Agent 技术分享 HTML Slides
         </aside>
       </section>
 
+      <section data-part="2" data-visibility="uncounted">
+        <div class="appendix-badge">源码旁证 A1</div>
+        <h2>真实代码：最小 Loop 只保留一眼能懂的片段</h2>
+        <div class="code-card">
+          <div class="code-title">
+            <span>AI-Agent S01：agentLoop</span>
+            <span>vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S01AgentLoop.java:331-335</span>
+          </div>
+          <pre><code class="language-java">private static void agentLoop(AnthropicClient client, LoopState state) {
+    while (runOneTurn(client, state)) {
+        // 后续章节会在这里插入日志、权限检查、上下文压缩等
+    }
+}</code></pre>
+        </div>
+        <div class="takeaway"><strong>这页只承担一个任务：</strong>把前一页的“循环职责”落到源码上，证明最小 Loop 很短，复杂度来自 Loop 周边的扩展点。</div>
+        <aside class="notes">
+          紧贴核心循环展示，帮助听众把抽象循环和真实代码对上。
+        </aside>
+      </section>
+
       <section data-part="2">
         <h2>stop_reason 是模型和 Harness 的最小协议</h2>
         <div class="layout-3">
@@ -860,6 +880,29 @@ AI Agent 技术分享 HTML Slides
         <div class="takeaway"><strong>这不是过度设计。</strong>只要工具会改变外部世界，控制面和执行面分离就是最小安全边界。</div>
         <aside class="notes">
           这页把“控制面/执行面”从术语展开成工程收益。
+        </aside>
+      </section>
+
+      <section data-part="2" data-visibility="uncounted">
+        <div class="appendix-badge">源码旁证 A2</div>
+        <h2>真实代码：Tool Dispatch 的最小形态</h2>
+        <div class="code-card">
+          <div class="code-title">
+            <span>OpenClaw S02：TOOL_HANDLERS</span>
+            <span>vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S02ToolUse.java:351-370</span>
+          </div>
+          <pre><code class="language-java">static final Map&lt;String, Function&lt;Map&lt;String, Object&gt;, String&gt;&gt; TOOL_HANDLERS =
+        new LinkedHashMap&lt;&gt;();
+static {
+    TOOL_HANDLERS.put("bash", S02ToolUse::toolBash);
+    TOOL_HANDLERS.put("read_file", S02ToolUse::toolReadFile);
+    TOOL_HANDLERS.put("write_file", S02ToolUse::toolWriteFile);
+    TOOL_HANDLERS.put("edit_file", S02ToolUse::toolEditFile);
+}</code></pre>
+        </div>
+        <div class="takeaway"><strong>把代码放在这里更容易讲：</strong>前一页解释为什么要拆 Schema 和 Handler，这页只展示 Handler 分发的最小形态。</div>
+        <aside class="notes">
+          讲到控制面/执行面后立即展示，让听众看到“执行面”在代码里通常就是一张可替换的分发表。
         </aside>
       </section>
 
@@ -1221,6 +1264,30 @@ AI Agent 技术分享 HTML Slides
         <p class="source">来源：OpenClaw S06 Intelligence；enterprise PromptAssembler</p>
         <aside class="notes">
           这页保留八层提示词，但不再配代码。重点是“按层组装”的工程意义。
+        </aside>
+      </section>
+
+      <section data-part="4" data-visibility="uncounted">
+        <div class="appendix-badge">源码旁证 A3</div>
+        <h2>真实代码：PromptAssembler 是“按层装配”</h2>
+        <div class="code-card">
+          <div class="code-title">
+            <span>enterprise PromptAssembler</span>
+            <span>vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/src/main/java/com/openclaw/enterprise/intelligence/PromptAssembler.java:55-114</span>
+          </div>
+          <pre><code class="language-java">public String buildSystemPrompt(String agentId, PromptContext context) {
+    Map&lt;String, String&gt; files = bootstrapLoader.loadAll(LoadMode.FULL);
+    StringJoiner prompt = new StringJoiner("\n\n");
+    appendLayer(prompt, files.get("IDENTITY.md"), "## Identity");
+    appendLayer(prompt, files.get("SOUL.md"), "## Personality");
+    appendLayer(prompt, files.get("TOOLS.md"), "## Tools Guide");
+    // skills, memory, bootstrap, runtime, channel
+    return prompt.toString();
+}</code></pre>
+        </div>
+        <div class="takeaway"><strong>这页把“提示词工程”换成“配置装配”：</strong>人格、工具、记忆和运行态不是散文，而是可组合、可替换、可审计的层。</div>
+        <aside class="notes">
+          用来证明主讲页的八层提示词不是虚构的。
         </aside>
       </section>
 
@@ -1586,71 +1653,6 @@ AI Agent 技术分享 HTML Slides
 
       <section data-part="7" data-visibility="uncounted">
         <div class="appendix-badge">Appendix A1</div>
-        <h2>真实代码：最小 Loop 只保留一眼能懂的片段</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>AI-Agent S01：agentLoop</span>
-            <span>vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S01AgentLoop.java:331-335</span>
-          </div>
-          <pre><code class="language-java">private static void agentLoop(AnthropicClient client, LoopState state) {
-    while (runOneTurn(client, state)) {
-        // 后续章节会在这里插入日志、权限检查、上下文压缩等
-    }
-}</code></pre>
-        </div>
-        <div class="takeaway"><strong>为什么放附录：</strong>这段代码很重要，但它不是主讲重点；重点是它暴露出的扩展位置。</div>
-        <aside class="notes">
-          如果有人追问“5 行 Loop 到底长什么样”，再展示这页。
-        </aside>
-      </section>
-
-      <section data-part="7" data-visibility="uncounted">
-        <div class="appendix-badge">Appendix A2</div>
-        <h2>真实代码：Tool Dispatch 的最小形态</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>OpenClaw S02：TOOL_HANDLERS</span>
-            <span>vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S02ToolUse.java:351-370</span>
-          </div>
-          <pre><code class="language-java">static final Map&lt;String, Function&lt;Map&lt;String, Object&gt;, String&gt;&gt; TOOL_HANDLERS =
-        new LinkedHashMap&lt;&gt;();
-static {
-    TOOL_HANDLERS.put("bash", S02ToolUse::toolBash);
-    TOOL_HANDLERS.put("read_file", S02ToolUse::toolReadFile);
-    TOOL_HANDLERS.put("write_file", S02ToolUse::toolWriteFile);
-    TOOL_HANDLERS.put("edit_file", S02ToolUse::toolEditFile);
-}</code></pre>
-        </div>
-        <aside class="notes">
-          这页只在需要代码证据时讲。主讲页已经用控制面/执行面解释过。
-        </aside>
-      </section>
-
-      <section data-part="7" data-visibility="uncounted">
-        <div class="appendix-badge">Appendix A3</div>
-        <h2>真实代码：PromptAssembler 是“按层装配”</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>enterprise PromptAssembler</span>
-            <span>vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/src/main/java/com/openclaw/enterprise/intelligence/PromptAssembler.java:55-114</span>
-          </div>
-          <pre><code class="language-java">public String buildSystemPrompt(String agentId, PromptContext context) {
-    Map&lt;String, String&gt; files = bootstrapLoader.loadAll(LoadMode.FULL);
-    StringJoiner prompt = new StringJoiner("\n\n");
-    appendLayer(prompt, files.get("IDENTITY.md"), "## Identity");
-    appendLayer(prompt, files.get("SOUL.md"), "## Personality");
-    appendLayer(prompt, files.get("TOOLS.md"), "## Tools Guide");
-    // skills, memory, bootstrap, runtime, channel
-    return prompt.toString();
-}</code></pre>
-        </div>
-        <aside class="notes">
-          用来证明主讲页的八层提示词不是虚构的。
-        </aside>
-      </section>
-
-      <section data-part="7" data-visibility="uncounted">
-        <div class="appendix-badge">Appendix A4</div>
         <h2>AI-Agent 源码地图：按架构问题读</h2>
         <table>
           <thead>
@@ -1669,7 +1671,7 @@ static {
       </section>
 
       <section data-part="7" data-visibility="uncounted">
-        <div class="appendix-badge">Appendix A5</div>
+        <div class="appendix-badge">Appendix A2</div>
         <h2>OpenClaw 源码地图：从 CLI 到 Gateway</h2>
         <table>
           <thead>
@@ -1688,7 +1690,7 @@ static {
       </section>
 
       <section data-part="7" data-visibility="uncounted">
-        <div class="appendix-badge">Appendix A6</div>
+        <div class="appendix-badge">Appendix A3</div>
         <h2>几个容易混淆的词</h2>
         <table>
           <thead>
