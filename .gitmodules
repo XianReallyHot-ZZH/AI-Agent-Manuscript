@@ -1,0 +1,6 @@
+[submodule "vendors/AI-Agent-ZeroToOne"]
+	path = vendors/AI-Agent-ZeroToOne
+	url = https://github.com/XianReallyHot-ZZH/AI-Agent-ZeroToOne
+[submodule "vendors/OpenClaw-ZeroToOne"]
+	path = vendors/OpenClaw-ZeroToOne
+	url = https://github.com/XianReallyHot-ZZH/OpenClaw-ZeroToOne
