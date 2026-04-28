@@ -4,7 +4,7 @@ AI Agent 技术分享 HTML Slides
   在项目根目录运行：python3 -m http.server 8000 --bind 127.0.0.1
   然后访问：http://127.0.0.1:8000/slides.html
 
-说明：speaker notes、CDN 资源和 Mermaid 在 HTTP server 下更稳定。
+说明：speaker notes 和 CDN 资源在 HTTP server 下更稳定。
 -->
 <!doctype html>
 <html lang="zh-CN">
@@ -902,6 +902,48 @@ AI Agent 技术分享 HTML Slides
         </aside>
       </section>
 
+      <section data-part="1">
+        <h2>源码原图转译：一次请求的完整生命周期</h2>
+        <div class="arch-diagram">
+          <div class="bridge-row five">
+            <div class="diagram-node small primary">
+              <div class="node-title">QueryState</div>
+              <p>初始化本次请求的目标、消息、权限上下文和运行状态。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small">
+              <div class="node-title">Assemble Input</div>
+              <p>组装 system prompt、messages、reminders 和 tools。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small primary">
+              <div class="node-title">Model Output</div>
+              <p>普通回答直接结束；tool_use 进入动作链路。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small">
+              <div class="node-title">Tool Router</div>
+              <p>分流到本地工具、MCP、agent、task 或 team 能力。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small primary">
+              <div class="node-title">State Re-entry</div>
+              <p>执行结果写回 message、task、memory、worktree 等状态。</p>
+            </div>
+          </div>
+          <div class="diagram-row cols-3 spaced">
+            <div class="diagram-node small"><div class="node-title">Permission</div><p>决定动作能不能执行，必要时询问或拒绝。</p></div>
+            <div class="diagram-node small"><div class="node-title">Hook</div><p>在工具调用前后插入观察、改写和审计。</p></div>
+            <div class="diagram-node small"><div class="node-title">Next Turn</div><p>tool_result 回到 List&lt;Message&gt;，QueryState 更新后继续。</p></div>
+          </div>
+        </div>
+        <div class="takeaway"><strong>这张图来自 AI-Agent 的“一次请求生命周期”。</strong>它比单纯 Loop 更完整：主循环只有一个，但外围会不断改变平台状态。</div>
+        <p class="source">来源：vendors/AI-Agent-ZeroToOne/mini-agent-4j/docs/cn/s00b-one-request-lifecycle.md</p>
+        <aside class="notes">
+          用源文档的生命周期图给听众建立“请求不是一次模型调用”的直觉，后续所有模块都能挂到 Query Loop、Tool Control Plane、Platform State 三层。
+        </aside>
+      </section>
+
       <section data-part="2" class="chapter">
         <div class="eyebrow">Part 2 / Core Architecture</div>
         <h2>Agent 的本质：可行动的循环</h2>
@@ -958,7 +1000,7 @@ AI Agent 技术分享 HTML Slides
         <div class="loopback-note">tool_result -> Build Context：循环继续，直到模型结束或系统中断。</div>
         <div class="takeaway"><strong>这张图就是 Agent 的心脏。</strong>所有高级能力都在 Context、Policy、Tool、Result 这几个位置扩展。</div>
         <aside class="notes">
-          这里改成静态 HTML 流程图，避免 Part 2 依赖 Mermaid 渲染。
+          这里使用静态 HTML 流程图，避免演示时依赖动态图表渲染。
         </aside>
       </section>
 
@@ -1094,7 +1136,7 @@ AI Agent 技术分享 HTML Slides
           </div>
         </div>
         <aside class="notes">
-          这页也改成静态 HTML 流程图，减少演示时 Mermaid 失败面。
+          这页也使用静态 HTML 流程图，减少演示时的渲染失败面。
         </aside>
       </section>
 
@@ -1345,7 +1387,7 @@ static {
         <div class="takeaway"><strong>两层知识注入的价值：</strong>先让模型知道“有什么”，只有需要时再给它“全部内容”。</div>
         <p class="source">来源：AI-Agent S05 Skill Loading</p>
         <aside class="notes">
-          这比展示 describeAvailable/loadFullText 代码更容易理解，也避免 Mermaid 渲染依赖。
+          这比展示 describeAvailable/loadFullText 代码更容易理解，也避免额外渲染依赖。
         </aside>
       </section>
 
@@ -1390,7 +1432,7 @@ static {
         <div class="takeaway"><strong>好的 compact 不是一句“之前聊过很多”。</strong>它必须保留目标、已做决策、关键事实、未完成动作。</div>
         <p class="source">来源：AI-Agent S06 Context Compact；OpenClaw S03 Context Guard</p>
         <aside class="notes">
-          这里把 AI-Agent 的压缩和 OpenClaw 的 ContextGuard 统一起来讲，并避免 Mermaid 渲染依赖。
+          这里把 AI-Agent 的压缩和 OpenClaw 的 ContextGuard 统一起来讲，并避免额外渲染依赖。
         </aside>
       </section>
 
@@ -1421,7 +1463,7 @@ static {
         <div class="takeaway"><strong>平台差异要挡在 Loop 外面。</strong>Agent 只处理标准化消息，不应该知道 Telegram 或飞书的细节。</div>
         <p class="source">来源：OpenClaw S04 Channels；S05 Gateway &amp; Routing</p>
         <aside class="notes">
-          这页说明 OpenClaw 为什么从 CLI 走向 Gateway，并避免 Mermaid 渲染依赖。
+          这页说明 OpenClaw 为什么从 CLI 走向 Gateway，并避免额外渲染依赖。
         </aside>
       </section>
 
@@ -1610,6 +1652,42 @@ static {
         </aside>
       </section>
 
+      <section data-part="4">
+        <h2>源码原图转译：Intelligence 是一条装配链</h2>
+        <div class="arch-diagram">
+          <div class="bridge-row">
+            <div class="diagram-node primary">
+              <div class="node-title">Bootstrap Files</div>
+              <p>SOUL、IDENTITY、TOOLS、MEMORY 等文件提供稳定配置。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node">
+              <div class="node-title">BootstrapLoader</div>
+              <p>加载、截断、容量控制，避免把配置无边界塞进上下文。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node primary">
+              <div class="node-title">PromptAssembler</div>
+              <p>按 Identity、Soul、Tools、Skills、Memory、Runtime、Channel 分层装配。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node">
+              <div class="node-title">Agent Loop</div>
+              <p>每轮 search、build、call LLM，把提示词变成运行时输入。</p>
+            </div>
+          </div>
+          <div class="diagram-row cols-2 spaced">
+            <div class="diagram-node small"><div class="node-title">SkillsManager</div><p>发现技能、解析元信息，按需给 PromptAssembler 提供知识。</p></div>
+            <div class="diagram-node small"><div class="node-title">MemoryStore</div><p>写入长期记忆，并通过 hybridSearch 给当前任务召回事实。</p></div>
+          </div>
+        </div>
+        <div class="takeaway"><strong>Intelligence 不是“一个很长的 prompt”。</strong>它是文件、技能、记忆和运行态共同参与的一条装配链。</div>
+        <p class="source">来源：vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/docs/s06_intelligence.md</p>
+        <aside class="notes">
+          这页直接转译 OpenClaw S06 源图，帮助听众把 PromptAssembler、SkillsManager、MemoryStore 的关系看成一条链。
+        </aside>
+      </section>
+
       <section data-part="4" data-visibility="uncounted">
         <div class="appendix-badge">源码旁证 A3</div>
         <h2>真实代码：PromptAssembler 是“按层装配”</h2>
@@ -1652,27 +1730,27 @@ static {
         <h2>恢复策略：失败不是 if/else，而是分层处理</h2>
         <div class="flow-strip compact">
           <div class="flow-step">
-            <div class="step-title">Call Model</div>
-            <p>先尝试正常生成。</p>
+            <div class="step-title">Auth Rotation</div>
+            <p>main-key、backup-key、emergency-key 按冷却状态轮换。</p>
           </div>
           <div class="flow-step">
-            <div class="step-title">Auth / Rate</div>
-            <p>认证、限流、超时先做轮换或退避。</p>
+            <div class="step-title">Profile Select</div>
+            <p>选择第一个不在 cooldown 的 profile 执行。</p>
           </div>
           <div class="flow-step">
-            <div class="step-title">Context</div>
-            <p>上下文溢出就截断工具结果或 compact。</p>
+            <div class="step-title">Overflow Recovery</div>
+            <p>上下文溢出时 compactAttempt 0..2 原地压缩重试。</p>
           </div>
           <div class="flow-step">
-            <div class="step-title">Tool Loop</div>
-            <p>工具失败把错误反馈给模型再重试。</p>
+            <div class="step-title">Tool-Use Loop</div>
+            <p>正常进入 while True + stop_reason 工具循环。</p>
           </div>
           <div class="flow-step">
-            <div class="step-title">Return</div>
-            <p>恢复成功后交付结果，失败则升级处理。</p>
+            <div class="step-title">Classify Failure</div>
+            <p>按 overflow、auth、rate、timeout、billing 分类处理。</p>
           </div>
         </div>
-        <div class="takeaway"><strong>三层重试洋葱：</strong>认证与限流、上下文恢复、工具循环，各自有不同的恢复动作。</div>
+        <div class="takeaway"><strong>这页按 OpenClaw S09 的源图重写。</strong>恢复不是一层 retry，而是 Profile 轮换、上下文压缩、工具循环三层各自处理不同失败。</div>
         <p class="source">来源：OpenClaw S09 Resilience；S03 Context Guard</p>
         <aside class="notes">
           讲清楚为什么重试不能一把梭。
@@ -1683,27 +1761,27 @@ static {
         <h2>消息投递：先落盘，再发出去</h2>
         <div class="flow-strip compact">
           <div class="flow-step">
-            <div class="step-title">Agent</div>
-            <p>生成待发送消息。</p>
+            <div class="step-title">Reply Source</div>
+            <p>Agent Reply、Heartbeat、Cron 都可能产生待投递消息。</p>
           </div>
           <div class="flow-step">
-            <div class="step-title">WAL Queue</div>
-            <p>先进入可恢复队列。</p>
+            <div class="step-title">chunkMessage</div>
+            <p>先切分长消息，避免平台长度限制导致整条失败。</p>
           </div>
           <div class="flow-step">
-            <div class="step-title">Disk</div>
-            <p>tmp write + fsync + atomic rename。</p>
+            <div class="step-title">DeliveryQueue</div>
+            <p>enqueue 时写入磁盘 WAL，pending 状态可恢复。</p>
           </div>
           <div class="flow-step">
-            <div class="step-title">Channel</div>
-            <p>投递到外部平台。</p>
+            <div class="step-title">DeliveryRunner</div>
+            <p>后台线程调用 deliver_fn(channel, to, text)。</p>
           </div>
           <div class="flow-step">
-            <div class="step-title">Ack / Retry</div>
-            <p>成功删除 pending；失败保留重试元数据。</p>
+            <div class="step-title">Ack / Backoff</div>
+            <p>成功 ack 删除文件；失败 backoff，耗尽后进入 failed。</p>
           </div>
         </div>
-        <div class="takeaway"><strong>投递系统要假设外部平台会失败。</strong>WAL 的价值是让“发没发出去”有可恢复状态。</div>
+        <div class="takeaway"><strong>这页贴近 OpenClaw S08 的 WAL 图。</strong>关键不是“发消息”，而是每条待投递消息都有 pending、retry、failed 这些可恢复状态。</div>
         <p class="source">来源：OpenClaw S08 Delivery</p>
         <aside class="notes">
           用时序图替代原子写代码。
@@ -1717,7 +1795,14 @@ static {
           <div class="panel"><h3>cron</h3><p>定时任务，适合独立车道和限流。</p></div>
           <div class="panel"><h3>heartbeat</h3><p>主动检查和后台触发，需要去重和降噪。</p></div>
         </div>
-        <div class="takeaway"><strong>并发不是越多越好。</strong>Agent 的状态很容易被交错请求污染，车道队列先保证顺序边界。</div>
+        <div class="flow-strip compact">
+          <div class="flow-step"><div class="step-title">Incoming Work</div><p>请求、定时任务和心跳进入调度入口。</p></div>
+          <div class="flow-step"><div class="step-title">CommandQueue</div><p>enqueue(lane, fn)，按工作类型选择车道。</p></div>
+          <div class="flow-step"><div class="step-title">LaneQueue</div><p>main、cron、heartbeat 各自 FIFO，通常 max=1。</p></div>
+          <div class="flow-step"><div class="step-title">Active Tasks</div><p>只让当前车道允许的任务并发执行。</p></div>
+          <div class="flow-step"><div class="step-title">pump()</div><p>taskDone 后拉起下一项，generation 可取消过期任务。</p></div>
+        </div>
+        <div class="takeaway"><strong>并发不是越多越好。</strong>这页按 OpenClaw S10 源图补齐 LaneQueue 心智模型：先分车道，再限制每条车道内的状态交错。</div>
         <p class="source">来源：OpenClaw S10 Concurrency；AI-Agent S13/S14</p>
         <aside class="notes">
           让听众理解 lane queue 的作用，而不是陷入虚拟线程细节。
@@ -1740,6 +1825,27 @@ static {
         <p class="source">来源：OpenClaw README；enterprise-claw-4j 源码结构</p>
         <aside class="notes">
           这页连接教学项目和生产项目。
+        </aside>
+      </section>
+
+      <section data-part="4">
+        <h2>源码原图转译：enterprise-claw 的生产模块图</h2>
+        <div class="arch-diagram">
+          <div class="diagram-row cols-3">
+            <div class="diagram-node primary"><div class="node-title">API Layer</div><p>REST GatewayController 与 WebSocket JSON-RPC 是外部入口。</p></div>
+            <div class="diagram-node"><div class="node-title">Gateway</div><p>GatewayService、BindingTable、AgentManager、MessagePumpService 负责路由。</p></div>
+            <div class="diagram-node primary"><div class="node-title">Agent Core</div><p>AgentLoop、ToolRegistry、ContextGuard 承接真正的运行时闭环。</p></div>
+          </div>
+          <div class="diagram-row cols-3 spaced">
+            <div class="diagram-node"><div class="node-title">Intelligence</div><p>PromptAssembler、MemoryStore、BootstrapLoader、SkillsManager 组装智能输入。</p></div>
+            <div class="diagram-node primary"><div class="node-title">Infrastructure</div><p>ResilienceRunner、CommandQueue、DeliveryQueue、Heartbeat、Cron 支撑可靠运行。</p></div>
+            <div class="diagram-node"><div class="node-title">Channels / Session / Health</div><p>多渠道适配、JSONL 会话持久化、优雅关闭和工作区健康检查。</p></div>
+          </div>
+        </div>
+        <div class="takeaway"><strong>这张图说明“生产级”不是把代码写复杂。</strong>它是把入口、路由、循环、智能装配、基础设施和运维边界拆清楚。</div>
+        <p class="source">来源：vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/docs/overview.md</p>
+        <aside class="notes">
+          转译 enterprise overview 的包关系图。讲完这页后，教学版到生产版的差异就从“代码量变多”变成“模块边界变清楚”。
         </aside>
       </section>
 
@@ -1950,6 +2056,48 @@ static {
         <p class="source">来源：OpenClaw S05 Gateway &amp; Routing</p>
         <aside class="notes">
           这页把 OpenClaw 的 Gateway 路由和 Agent Loop 连接起来。
+        </aside>
+      </section>
+
+      <section data-part="5">
+        <h2>源码原图转译：Gateway 请求流程</h2>
+        <div class="arch-diagram">
+          <div class="bridge-row five">
+            <div class="diagram-node small primary">
+              <div class="node-title">User</div>
+              <p>在某个外部渠道发送消息。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small">
+              <div class="node-title">Channel</div>
+              <p>适配器把平台事件变成 InboundMessage。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small primary">
+              <div class="node-title">MessagePump</div>
+              <p>统一把消息推给 GatewayService.route(msg)。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small">
+              <div class="node-title">BindingTable</div>
+              <p>resolve(channel, peer)，得到 agentId。</p>
+            </div>
+            <div class="diagram-arrow">-&gt;</div>
+            <div class="diagram-node small primary">
+              <div class="node-title">AgentLoop</div>
+              <p>进入 tool loop，并被 ResilienceRunner 包裹。</p>
+            </div>
+          </div>
+          <div class="diagram-row cols-3 spaced">
+            <div class="diagram-node small"><div class="node-title">ToolRegistry</div><p>AgentLoop 调用 dispatch(toolName, input)，拿回结果。</p></div>
+            <div class="diagram-node small"><div class="node-title">GatewayService</div><p>接收 AgentTurnResult，决定回复路径。</p></div>
+            <div class="diagram-node small"><div class="node-title">Channel.send</div><p>结果回到原渠道，或进入 DeliveryQueue 做可靠投递。</p></div>
+          </div>
+        </div>
+        <div class="takeaway"><strong>这张图来自 enterprise overview 的 sequenceDiagram。</strong>它把“路由”和“运行时”连成一条请求链，避免 Gateway 被误解成简单转发器。</div>
+        <p class="source">来源：vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/docs/overview.md</p>
+        <aside class="notes">
+          用源项目的请求流程图讲清楚 Gateway、BindingTable、AgentLoop、ToolRegistry、ResilienceRunner 的先后关系。
         </aside>
       </section>
 
