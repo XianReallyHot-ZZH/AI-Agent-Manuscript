@@ -307,6 +307,14 @@ AI Agent 技术分享 HTML Slides
       margin-top: 28px;
     }
 
+    .flow-strip.compact {
+      margin-top: 18px;
+    }
+
+    .flow-strip.compact .flow-step {
+      min-height: 108px;
+    }
+
     .flow-step {
       position: relative;
       border: 1px solid var(--line);
@@ -343,6 +351,14 @@ AI Agent 技术分享 HTML Slides
       color: var(--muted);
       font-size: 0.56em;
       line-height: 1.42;
+    }
+
+    .loopback-note {
+      margin-top: 14px;
+      font-family: var(--font-heading);
+      color: var(--accent);
+      font-size: 0.5em;
+      letter-spacing: 0;
     }
 
     table {
@@ -746,22 +762,32 @@ flowchart LR
 
       <section data-part="2">
         <h2>核心循环：不是代码短，而是职责清楚</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart TD
-  Start["User Goal"] --> Context["Build Context<br/>messages + tools + system"]
-  Context --> Call["Call Model"]
-  Call --> Reason{"Stop Reason"}
-  Reason -->|"end_turn"| Reply["Return Reply"]
-  Reason -->|"tool_use"| Policy["Policy Gate"]
-  Policy --> Tool["Execute Tool"]
-  Tool --> Result["Append tool_result"]
-  Result --> Context
+        <div class="flow-strip compact">
+          <div class="flow-step">
+            <div class="step-title">Build Context</div>
+            <p>把 messages、tools、system prompt 组成本轮输入。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Call Model</div>
+            <p>模型基于上下文选择回答或请求工具。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">stop_reason</div>
+            <p>end_turn 交付；tool_use 进入工具链路。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Policy + Tool</div>
+            <p>先过权限边界，再执行真实副作用。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">tool_result</div>
+            <p>把结果回写上下文，进入下一轮。</p>
           </div>
         </div>
+        <div class="loopback-note">tool_result -> Build Context：循环继续，直到模型结束或系统中断。</div>
         <div class="takeaway"><strong>这张图就是 Agent 的心脏。</strong>所有高级能力都在 Context、Policy、Tool、Result 这几个位置扩展。</div>
         <aside class="notes">
-          以架构图替代代码页，告诉听众扩展点在哪里。
+          这里改成静态 HTML 流程图，避免 Part 2 依赖 Mermaid 渲染。
         </aside>
       </section>
 
@@ -791,17 +817,30 @@ flowchart TD
             <p>真正读文件、写文件、跑 Shell、发消息。它影响真实世界的状态。</p>
           </div>
         </div>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart LR
-  Schema["Tool Schema<br/>model-facing contract"] --> Choice["Model chooses<br/>tool_use"]
-  Choice --> Gate["Policy Gate<br/>allow / deny / ask"]
-  Gate --> Handler["Handler<br/>side effects"]
-  Handler --> Result["tool_result<br/>back to context"]
+        <div class="flow-strip compact">
+          <div class="flow-step">
+            <div class="step-title">Tool Schema</div>
+            <p>面向模型的契约：名称、描述、输入结构。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Model Choice</div>
+            <p>模型输出 tool_use，表达想调用什么能力。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Policy Gate</div>
+            <p>allow、deny、ask，把副作用关进边界。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Handler</div>
+            <p>真正执行文件、Shell、渠道或 MCP 操作。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">tool_result</div>
+            <p>把事实和错误反馈送回上下文。</p>
           </div>
         </div>
         <aside class="notes">
-          旧版展示 Handler Map 代码太早。这里先讲为什么要分成控制面和执行面。
+          这页也改成静态 HTML 流程图，减少演示时 Mermaid 失败面。
         </aside>
       </section>
 
@@ -917,39 +956,63 @@ flowchart LR
 
       <section data-part="3">
         <h2>压缩：不是丢历史，而是重建继续工作的记忆</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart TD
-  Raw["Raw History<br/>long and noisy"] --> Detect["Token pressure<br/>or overflow"]
-  Detect --> Summarize["Summarize<br/>goal / facts / decisions / open work"]
-  Summarize --> Rebuild["Rebuild Context<br/>summary + current state"]
-  Rebuild --> Continue["Continue task"]
+        <div class="flow-strip compact">
+          <div class="flow-step">
+            <div class="step-title">Raw History</div>
+            <p>历史很长，夹杂工具输出、失败尝试和临时推理。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Pressure</div>
+            <p>接近 token 上限，或 API 返回上下文溢出错误。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Summarize</div>
+            <p>保留目标、事实、决策、未完成工作和风险。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Rebuild</div>
+            <p>用摘要和当前状态重建下一轮上下文。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Continue</div>
+            <p>模型从压缩后的工作记忆继续执行。</p>
           </div>
         </div>
         <div class="takeaway"><strong>好的 compact 不是一句“之前聊过很多”。</strong>它必须保留目标、已做决策、关键事实、未完成动作。</div>
         <p class="source">来源：AI-Agent S06 Context Compact；OpenClaw S03 Context Guard</p>
         <aside class="notes">
-          这里把 AI-Agent 的压缩和 OpenClaw 的 ContextGuard 统一起来讲。
+          这里把 AI-Agent 的压缩和 OpenClaw 的 ContextGuard 统一起来讲，并避免 Mermaid 渲染依赖。
         </aside>
       </section>
 
       <section data-part="3">
         <h2>Channel 抽象：让 Agent 不关心消息来自哪里</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart LR
-  CLI["CLI"] --> Normalize["InboundMessage"]
-  Telegram["Telegram"] --> Normalize
-  Feishu["Feishu"] --> Normalize
-  Normalize --> Gateway["Gateway / Routing"]
-  Gateway --> Loop["Agent Loop"]
-  Loop --> Delivery["Delivery Adapter"]
+        <div class="flow-strip compact">
+          <div class="flow-step">
+            <div class="step-title">Platform Events</div>
+            <p>CLI、Telegram、飞书等平台各有消息格式。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Normalize</div>
+            <p>统一成 InboundMessage，隐藏平台差异。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Gateway</div>
+            <p>根据绑定关系找到应该处理消息的 Agent。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Agent Loop</div>
+            <p>Agent 只处理标准化消息和上下文。</p>
+          </div>
+          <div class="flow-step">
+            <div class="step-title">Delivery</div>
+            <p>再由适配器把回复发回对应平台。</p>
           </div>
         </div>
         <div class="takeaway"><strong>平台差异要挡在 Loop 外面。</strong>Agent 只处理标准化消息，不应该知道 Telegram 或飞书的细节。</div>
         <p class="source">来源：OpenClaw S04 Channels；S05 Gateway &amp; Routing</p>
         <aside class="notes">
-          这页说明 OpenClaw 为什么从 CLI 走向 Gateway。
+          这页说明 OpenClaw 为什么从 CLI 走向 Gateway，并避免 Mermaid 渲染依赖。
         </aside>
       </section>
 
