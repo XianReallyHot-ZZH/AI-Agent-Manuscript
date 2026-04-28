@@ -1,8 +1,8 @@
 <!--
 AI Agent 技术分享 HTML Slides
 预览建议：
-  在项目根目录运行：python -m http.server 8000
-  然后访问：http://localhost:8000/slides.html
+  在项目根目录运行：python3 -m http.server 8000 --bind 127.0.0.1
+  然后访问：http://127.0.0.1:8000/slides.html
 
 说明：speaker notes、CDN 资源和 Mermaid 在 HTTP server 下更稳定。
 -->
@@ -11,7 +11,7 @@ AI Agent 技术分享 HTML Slides
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AI Agent 从 Loop 到 Gateway</title>
+  <title>AI Agent 架构心智模型</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,7 +35,8 @@ AI Agent 技术分享 HTML Slides
       --font-code: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
     }
 
-    html, body {
+    html,
+    body {
       background: var(--bg);
       color: var(--text);
       overflow: hidden;
@@ -85,22 +86,22 @@ AI Agent 技术分享 HTML Slides
     }
 
     .reveal h1 {
-      font-size: 3.2em;
+      font-size: 3.1em;
       font-weight: 700;
       color: var(--accent);
-      max-width: 1080px;
+      max-width: 1120px;
     }
 
     .reveal h2 {
-      font-size: 1.6em;
+      font-size: 1.52em;
       font-weight: 600;
-      margin-bottom: 26px;
+      margin-bottom: 24px;
     }
 
     .reveal h3 {
-      font-size: 1em;
+      font-size: 0.88em;
       font-weight: 600;
-      margin: 0 0 12px;
+      margin: 0 0 10px;
       color: var(--accent);
     }
 
@@ -118,30 +119,28 @@ AI Agent 技术分享 HTML Slides
       font-size: 0.82em;
       line-height: 1.55;
       color: var(--muted);
-      max-width: 860px;
+      max-width: 900px;
       margin-top: 26px;
     }
 
-    .kicker {
-      color: var(--muted);
-      font-size: 0.66em;
-      line-height: 1.5;
-    }
-
-    .reveal p,
-    .reveal li {
-      font-size: 0.82em;
+    .lead {
+      font-size: 1.06em;
       line-height: 1.45;
       color: var(--text);
+      max-width: 1040px;
     }
 
-    .reveal ul {
-      margin: 0;
-      padding-left: 1.05em;
+    .kicker,
+    .source {
+      color: var(--muted);
+      font-size: 0.56em;
+      line-height: 1.45;
     }
 
-    .reveal li {
-      margin: 0 0 12px;
+    .source {
+      font-family: var(--font-code);
+      margin-top: 10px;
+      word-break: break-all;
     }
 
     .muted {
@@ -154,17 +153,18 @@ AI Agent 技术分享 HTML Slides
 
     .big {
       font-family: var(--font-heading);
-      font-size: 2.8em;
+      font-size: 3em;
       line-height: 1;
       color: var(--accent);
       font-weight: 700;
     }
 
     .layout-2,
-    .layout-3 {
+    .layout-3,
+    .layout-4 {
       display: grid;
-      gap: 26px;
-      align-items: start;
+      gap: 22px;
+      align-items: stretch;
     }
 
     .layout-2 {
@@ -175,11 +175,15 @@ AI Agent 技术分享 HTML Slides
       grid-template-columns: repeat(3, 1fr);
     }
 
+    .layout-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
     .panel {
       background: var(--surface);
       border: 1px solid var(--line);
       border-radius: 8px;
-      padding: 22px 24px;
+      padding: 20px 22px;
     }
 
     .panel.tight {
@@ -189,24 +193,32 @@ AI Agent 技术分享 HTML Slides
     .panel p {
       margin: 0;
       color: var(--muted);
-      font-size: 0.72em;
+      font-size: 0.66em;
+      line-height: 1.48;
+    }
+
+    .panel strong {
+      color: var(--text);
+      font-family: var(--font-heading);
+      font-weight: 600;
     }
 
     .statement {
       font-family: var(--font-heading);
-      font-size: 1.55em;
+      font-size: 1.42em;
       line-height: 1.22;
       font-weight: 600;
-      max-width: 1060px;
+      max-width: 1080px;
     }
 
     .takeaway {
       border-left: 4px solid var(--accent);
-      padding: 18px 22px;
+      padding: 16px 20px;
       background: rgba(250, 249, 245, 0.035);
       border-radius: 0 8px 8px 0;
-      margin-top: 28px;
-      font-size: 0.74em;
+      margin-top: 24px;
+      font-size: 0.68em;
+      line-height: 1.48;
       color: var(--muted);
     }
 
@@ -215,16 +227,189 @@ AI Agent 技术分享 HTML Slides
       font-family: var(--font-heading);
     }
 
-    .source {
-      font-family: var(--font-code);
+    .list {
+      margin: 0;
+      padding-left: 1.05em;
+    }
+
+    .list li {
+      font-size: 0.74em;
+      line-height: 1.45;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .small-list li {
+      font-size: 0.64em;
+      margin-bottom: 8px;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 30px;
+    }
+
+    .metric {
+      border-top: 3px solid var(--accent);
+      padding-top: 14px;
+    }
+
+    .metric .number {
+      font-family: var(--font-heading);
+      font-size: 1.55em;
+      color: var(--accent);
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .metric .label {
+      margin-top: 8px;
       color: var(--muted);
-      font-size: 0.46em;
+      font-size: 0.56em;
+      line-height: 1.35;
+    }
+
+    .principle-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px 22px;
       margin-top: 10px;
-      word-break: break-all;
+    }
+
+    .principle {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .principle .num {
+      font-family: var(--font-heading);
+      color: var(--accent);
+      font-size: 0.8em;
+      font-weight: 700;
+    }
+
+    .principle .text {
+      font-size: 0.66em;
+      line-height: 1.45;
+      color: var(--text);
+    }
+
+    .flow-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .flow-step {
+      position: relative;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 18px 16px;
+      min-height: 126px;
+    }
+
+    .flow-step:after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -10px;
+      width: 18px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .flow-step:last-child:after {
+      display: none;
+    }
+
+    .flow-step .step-title {
+      font-family: var(--font-heading);
+      color: var(--accent);
+      font-size: 0.58em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .flow-step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.56em;
+      line-height: 1.42;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.6em;
+      line-height: 1.36;
+      color: var(--text);
+    }
+
+    th {
+      background: var(--surface);
+      color: var(--accent);
+      font-family: var(--font-heading);
+      font-weight: 600;
+    }
+
+    td,
+    th {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) td {
+      background: rgba(250, 249, 245, 0.03);
+    }
+
+    .mermaid-wrap {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+
+    .mermaid {
+      text-align: center;
+      font-family: var(--font-heading);
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    .mermaid svg {
+      display: block;
+      max-width: 100%;
+      max-height: 450px;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    .mermaid svg foreignObject,
+    .mermaid .nodeLabel,
+    .mermaid .edgeLabel {
+      overflow: visible;
+    }
+
+    .mermaid .node rect,
+    .mermaid .node polygon {
+      transform-box: fill-box;
+      transform-origin: center;
+      transform: scaleX(1.12);
     }
 
     .code-card {
-      margin-top: 18px;
+      margin-top: 14px;
     }
 
     .code-title {
@@ -242,7 +427,7 @@ AI Agent 技术分享 HTML Slides
     .code-title span:first-child {
       color: var(--accent);
       font-weight: 600;
-      flex: 0 1 42%;
+      flex: 0 1 40%;
     }
 
     .code-title span:last-child {
@@ -264,13 +449,13 @@ AI Agent 技术分享 HTML Slides
       width: 100%;
       box-sizing: border-box;
       font-family: var(--font-code);
-      font-size: 0.54em;
+      font-size: 0.52em;
       line-height: 1.42;
       max-height: none;
       background: var(--surface);
       border-left: 3px solid var(--accent);
       border-radius: 8px;
-      padding: 18px 20px;
+      padding: 17px 20px;
       color: var(--text);
       overflow: hidden;
       white-space: pre-wrap;
@@ -303,88 +488,16 @@ AI Agent 技术分享 HTML Slides
       color: #9db9d6;
     }
 
-    .code-mark {
-      background: color-mix(in srgb, var(--accent) 18%, transparent);
-      display: inline-block;
-      width: 100%;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.62em;
-      line-height: 1.35;
-      color: var(--text);
-    }
-
-    th {
-      background: var(--surface);
-      color: var(--accent);
-      font-family: var(--font-heading);
-      font-weight: 600;
-    }
-
-    td, th {
-      border: 1px solid var(--line);
-      padding: 10px 12px;
-      vertical-align: top;
-    }
-
-    tr:nth-child(even) td {
-      background: rgba(250, 249, 245, 0.03);
-    }
-
-    .mermaid-wrap {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 18px;
-      margin-top: 12px;
-      overflow: hidden;
-    }
-
-    .mermaid {
-      text-align: center;
-      font-family: var(--font-heading);
-      font-size: 16px;
-      line-height: 1.2;
-    }
-
-    .mermaid svg {
-      display: block;
-      max-width: 100%;
-      max-height: 460px;
-      height: auto;
-      margin: 0 auto;
-    }
-
-    .mermaid svg foreignObject,
-    .mermaid .nodeLabel,
-    .mermaid .edgeLabel {
-      overflow: visible;
-    }
-
-    .mermaid .node rect,
-    .mermaid .node polygon {
-      transform-box: fill-box;
-      transform-origin: center;
-      transform: scaleX(1.14);
-    }
-
-    .layout-2 .mermaid svg {
-      max-height: 410px;
-    }
-
     .chapter {
       display: flex !important;
       flex-direction: column;
       justify-content: flex-start;
-      padding-top: 156px;
+      padding-top: 150px;
       border-left: 10px solid var(--accent);
     }
 
     .chapter h2 {
-      font-size: 3em;
+      font-size: 2.8em;
       color: var(--accent);
       margin-bottom: 20px;
     }
@@ -394,28 +507,6 @@ AI Agent 技术分享 HTML Slides
       width: 84%;
       background: var(--line);
       margin-top: 36px;
-    }
-
-    .timeline {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 14px;
-      margin-top: 30px;
-    }
-
-    .timeline .step {
-      border-top: 3px solid var(--accent);
-      padding-top: 14px;
-      color: var(--muted);
-      font-size: 0.58em;
-      line-height: 1.35;
-    }
-
-    .timeline strong {
-      display: block;
-      color: var(--text);
-      font-family: var(--font-heading);
-      margin-bottom: 8px;
     }
 
     .slide-footer {
@@ -466,22 +557,13 @@ AI Agent 技术分享 HTML Slides
       background: rgba(250, 249, 245, 0.025);
     }
 
-    .quote {
+    .appendix-badge {
       font-family: var(--font-heading);
-      font-size: 1.5em;
-      line-height: 1.24;
-      color: var(--text);
-      max-width: 980px;
-    }
-
-    .quote em {
       color: var(--accent);
-      font-style: normal;
-    }
-
-    .small-list li {
-      font-size: 0.68em;
-      margin-bottom: 9px;
+      font-size: 0.44em;
+      margin-bottom: 18px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
     }
 
     .reveal .controls {
@@ -492,25 +574,23 @@ AI Agent 技术分享 HTML Slides
       display: none;
     }
 
-    .appendix-badge {
-      font-family: var(--font-heading);
-      color: var(--accent);
-      font-size: 0.44em;
-      margin-bottom: 18px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
     @media (max-width: 900px) {
       .reveal section {
         padding: 40px 42px 86px;
       }
       .chapter {
-        padding-top: 112px;
+        padding-top: 110px;
       }
       .layout-2,
-      .layout-3 {
+      .layout-3,
+      .layout-4,
+      .metric-row,
+      .principle-grid,
+      .flow-strip {
         grid-template-columns: 1fr;
+      }
+      .flow-step:after {
+        display: none;
       }
       .code-title {
         flex-direction: column;
@@ -525,13 +605,6 @@ AI Agent 技术分享 HTML Slides
       .reveal pre code {
         font-size: 0.5em;
         padding: 16px 18px;
-      }
-      .mermaid svg,
-      .layout-2 .mermaid svg {
-        max-height: 360px;
-      }
-      .timeline {
-        grid-template-columns: 1fr 1fr;
       }
       .slide-footer {
         left: 42px;
@@ -548,122 +621,719 @@ AI Agent 技术分享 HTML Slides
 
       <section data-part="1" class="chapter">
         <div class="eyebrow">AI Agent Technical Sharing</div>
-        <h1>5 行循环，长成一个 Agent Gateway</h1>
-        <p class="subtitle">基于 AI-Agent-ZeroToOne 与 OpenClaw-ZeroToOne：从最小 Agent Loop，到工具、记忆、可靠性、多 Agent 协作和生产级网关。</p>
+        <h1>AI Agent 架构心智模型</h1>
+        <p class="subtitle">基于 AI-Agent-ZeroToOne 与 OpenClaw-ZeroToOne：少看源码堆叠，多看系统边界、信息流和工程取舍。</p>
         <div class="chapter-line"></div>
         <aside class="notes">
-          开场强调：这不是泛泛介绍 Agent，而是从两个教学项目的真实 Java 源码里抽出核心模式。核心问题：相同问题，不同工程取舍。
+          新版开场要先降低认知负担：今天不是逐行读 Java，而是建立能迁移到任意 Agent 系统的架构模型。
         </aside>
       </section>
 
       <section data-part="1">
-        <h2>你每天用的 Claude Code，核心其实是一个循环</h2>
-        <div class="layout-2">
-          <div>
-            <p class="statement">模型不是“被调用一次”的函数，而是在环境里反复观察、决定、行动。</p>
-            <ul>
-              <li>一次请求可能包含多轮 API 调用</li>
-              <li>工具结果会回写给模型</li>
-              <li>停止条件由 <span class="accent">stop_reason</span> 给出</li>
-            </ul>
-          </div>
-          <div class="panel">
-            <h3>大白话</h3>
-            <p>Agent 就像一个会查资料、会敲命令、会修改文件的人。模型负责决定下一步，代码负责把“下一步”变成真实动作。</p>
-          </div>
+        <h2>一句话先讲懂：模型在一个环境里循环工作</h2>
+        <p class="lead">Agent 不是某个神秘类，而是一个不断重复的闭环：<span class="accent">看见上下文</span>，<span class="accent">决定下一步</span>，<span class="accent">调用外部能力</span>，再把结果带回上下文。</p>
+        <div class="flow-strip">
+          <div class="flow-step"><div class="step-title">观察</div><p>用户消息、历史对话、文件、工具结果、系统状态。</p></div>
+          <div class="flow-step"><div class="step-title">判断</div><p>模型选择直接回答，还是请求某个工具。</p></div>
+          <div class="flow-step"><div class="step-title">行动</div><p>Harness 执行工具，真正改变外部世界。</p></div>
+          <div class="flow-step"><div class="step-title">回写</div><p>工具结果作为新消息进入上下文。</p></div>
+          <div class="flow-step"><div class="step-title">继续</div><p>直到模型给出结束信号或系统中断。</p></div>
         </div>
+        <div class="takeaway"><strong>先抓住这个循环。</strong>后面的规划、记忆、权限、队列、网关，本质上都在保护或增强这个循环。</div>
         <aside class="notes">
-          对不熟悉 Agent 的听众，先不要进入框架名词。先讲“循环 + 工具 + 结果回灌”这个最小闭环。
+          这页替代旧版过早展示代码。让没接触过 Agent 的人先有一个可视化直觉。
         </aside>
       </section>
 
       <section data-part="1">
-        <h2>什么是 AI Agent？先别急着上框架</h2>
+        <h2>三个角色，比“框架名词”更重要</h2>
         <div class="layout-3">
           <div class="panel">
-            <h3>观察</h3>
-            <p>读取用户输入、历史消息、文件、工具输出和环境状态。</p>
+            <h3>Model</h3>
+            <p><strong>负责选择。</strong>它读上下文，决定回答、调用工具、继续探索或停止。</p>
           </div>
           <div class="panel">
-            <h3>决定</h3>
-            <p>模型基于上下文选择：直接回答，还是调用工具。</p>
+            <h3>Harness</h3>
+            <p><strong>负责边界。</strong>它管理消息、工具、权限、重试、压缩和持久化。</p>
           </div>
           <div class="panel">
-            <h3>行动</h3>
-            <p>Harness 执行工具，并把结果作为下一轮输入送回模型。</p>
+            <h3>World</h3>
+            <p><strong>负责事实。</strong>文件系统、Shell、渠道、数据库、MCP 服务都在这里。</p>
           </div>
         </div>
-        <div class="takeaway"><strong>核心抽象：</strong>模型在一个可行动环境里循环，而不是代码里塞满 if/else 智能。</div>
-        <aside class="notes">
-          “Harness”就是运行环境。它提供工具、权限、上下文、恢复、通信等能力，但不负责替模型思考。
-        </aside>
-      </section>
-
-      <section data-part="1">
-        <h2>两个项目：一个教 Runtime，一个教 Gateway</h2>
         <div class="mermaid-wrap">
           <div class="mermaid">
 flowchart LR
-  A["AI-Agent<br/>ZeroToOne<br/>20 个 Session 文件"] --> R["Agent Runtime<br/>Loop / Tools<br/>Memory / Teams"]
-  B["OpenClaw<br/>ZeroToOne<br/>10 个 Session 文件"] --> G["Agent Gateway<br/>Channels / Routing<br/>Delivery"]
-  C["enterprise<br/>claw-4j<br/>87 个 Java 主类"] --> P["Production Shape<br/>Spring Boot / Docker<br/>K8s"]
-  R --> P
-  G --> P
+  User["User"] --> Harness["Harness<br/>state / policy / tools"]
+  Harness --> Model["Model<br/>reasoning + choice"]
+  Model --> Harness
+  Harness --> World["World<br/>files / shell / channels<br/>services"]
+  World --> Harness
           </div>
         </div>
-        <div class="source">来源：vendors/AI-Agent-ZeroToOne/README.md；vendors/OpenClaw-ZeroToOne/README.md；enterprise 源码统计</div>
         <aside class="notes">
-          这是基于 README 和源码结构的归纳。AI-Agent 强调 Agent Runtime 心智模型；OpenClaw 强调 Gateway 和生产级组织方式。
+          强调模型和 Harness 的分工。模型不直接碰外部世界，所有副作用都经过 Harness。
         </aside>
       </section>
 
       <section data-part="1">
-        <h2>今天的路线图：从 Loop 走到 Production</h2>
-        <div class="timeline">
-          <div class="step"><strong>Loop</strong>最小闭环和 stop_reason</div>
-          <div class="step"><strong>Tools</strong>Schema 表与 Handler 表</div>
-          <div class="step"><strong>Memory</strong>上下文、压缩、记忆检索</div>
-          <div class="step"><strong>Reliability</strong>权限、Hook、WAL、重试</div>
-          <div class="step"><strong>Gateway</strong>多平台、多 Agent、生产部署</div>
+        <h2>两个项目，其实是从两个方向讲同一件事</h2>
+        <div class="layout-2">
+          <div class="panel">
+            <h3>AI-Agent-ZeroToOne</h3>
+            <p>从一个 coding agent 的运行时出发，逐步加入工具、规划、技能、记忆、权限、多 Agent、MCP。</p>
+          </div>
+          <div class="panel">
+            <h3>OpenClaw-ZeroToOne</h3>
+            <p>从 Agent Gateway 出发，逐步加入会话、多平台渠道、路由、投递、重试、并发和生产部署。</p>
+          </div>
         </div>
-        <div class="takeaway"><strong>本节 takeaway：</strong>两个项目讲的是同一类 Agent 问题，只是站在 Runtime 与 Gateway 两个切面。</div>
+        <div class="metric-row">
+          <div class="metric"><div class="number">S01-S19</div><div class="label">AI-Agent 渐进课程，SFull 汇总全量机制</div></div>
+          <div class="metric"><div class="number">S01-S10</div><div class="label">OpenClaw light 课程，从 CLI 到 Gateway</div></div>
+          <div class="metric"><div class="number">2</div><div class="label">OpenClaw Java 实现：light 教学版与 enterprise 生产版</div></div>
+          <div class="metric"><div class="number">1</div><div class="label">共同核心：把模型接进可行动、可控、可恢复的系统</div></div>
+        </div>
+        <p class="source">来源：vendors/AI-Agent-ZeroToOne/README.md；vendors/OpenClaw-ZeroToOne/README.md</p>
         <aside class="notes">
-          主讲控制在核心模式，不追逐每个类的细节。Appendix 放源码地图和深入页。
+          这页的目的不是堆项目数据，而是给听众一个地图：Runtime 视角和 Gateway 视角互补。
+        </aside>
+      </section>
+
+      <section data-part="1">
+        <h2>今天不按源码顺序讲，按系统问题讲</h2>
+        <div class="flow-strip">
+          <div class="flow-step"><div class="step-title">本质</div><p>Agent 到底是什么？模型和代码怎么分工？</p></div>
+          <div class="flow-step"><div class="step-title">可用</div><p>为什么最小 Loop 很快会失控？</p></div>
+          <div class="flow-step"><div class="step-title">可靠</div><p>权限、恢复、投递、并发如何兜底？</p></div>
+          <div class="flow-step"><div class="step-title">协作</div><p>多 Agent 和 Gateway 为什么复杂？</p></div>
+          <div class="flow-step"><div class="step-title">落地</div><p>教学版如何长成生产系统？</p></div>
+        </div>
+        <div class="takeaway"><strong>编排原则：</strong>先讲架构原理，再讲机制为什么存在，最后再给源码路径。</div>
+        <aside class="notes">
+          明确告知新版不逐行讲代码。源码引用仍然保留，但作为证据，不作为主线。
         </aside>
       </section>
 
       <section data-part="2" class="chapter">
-        <div class="eyebrow">Part 2 / Core Principle</div>
-        <h2>The Model IS the Agent</h2>
-        <p class="subtitle">智能主要在模型里；代码提供可行动、可恢复、可治理的环境。</p>
+        <div class="eyebrow">Part 2 / Core Architecture</div>
+        <h2>Agent 的本质：可行动的循环</h2>
+        <p class="subtitle">AI-Agent 说 The Model IS the Agent；工程上要补一句：Harness 决定这个 Agent 能不能安全地行动。</p>
         <div class="chapter-line"></div>
         <aside class="notes">
-          AI-Agent-ZeroToOne README 明确给出这个核心理念。后面的每个设计都可以回到这句话。
+          第二部分从本质、边界、协议三个层面讲清楚 Agent。
         </aside>
       </section>
 
       <section data-part="2">
-        <h2>Agent = Loop + Tools，不是“代码里写智能”</h2>
+        <h2>“The Model IS the Agent”不是说代码不重要</h2>
+        <div class="layout-2">
+          <div class="panel">
+            <h3>模型提供智能</h3>
+            <p>理解目标、拆解任务、选择工具、判断是否继续，这些主要发生在模型里。</p>
+          </div>
+          <div class="panel">
+            <h3>代码提供世界</h3>
+            <p>代码负责把外部世界变成模型能读懂、能调用、能被约束的接口。</p>
+          </div>
+        </div>
+        <div class="takeaway"><strong>好的 Agent 工程不是把规则写死。</strong>它是把上下文、工具和边界组织好，让模型的选择能落到真实环境里。</div>
+        <p class="source">来源：AI-Agent-ZeroToOne README 核心设计哲学</p>
+        <aside class="notes">
+          这页解释项目核心理念，避免听众误解为“只要 while 循环就够了”。
+        </aside>
+      </section>
+
+      <section data-part="2">
+        <h2>核心循环：不是代码短，而是职责清楚</h2>
         <div class="mermaid-wrap">
           <div class="mermaid">
 flowchart TD
-  U["User Message"] --> M["messages 历史"]
-  M --> L["LLM<br/>(messages, tools)"]
-  L --> S{"stop_reason"}
-  S -->|"end_turn"| A["Assistant Reply"]
-  S -->|"tool_use"| T["execute tool"]
-  T --> R["tool_result<br/>as user message"]
-  R --> M
+  Start["User Goal"] --> Context["Build Context<br/>messages + tools + system"]
+  Context --> Call["Call Model"]
+  Call --> Reason{"Stop Reason"}
+  Reason -->|"end_turn"| Reply["Return Reply"]
+  Reason -->|"tool_use"| Policy["Policy Gate"]
+  Policy --> Tool["Execute Tool"]
+  Tool --> Result["Append tool_result"]
+  Result --> Context
           </div>
         </div>
-        <p class="source">架构依据：AI-Agent-ZeroToOne README 核心架构；S01AgentLoop.java；OpenClaw S01/S02</p>
+        <div class="takeaway"><strong>这张图就是 Agent 的心脏。</strong>所有高级能力都在 Context、Policy、Tool、Result 这几个位置扩展。</div>
         <aside class="notes">
-          这是基于 README、S01/S02 源码归纳的 Agent Loop 图。强调 tool_result 在 Anthropic API 中作为 user 消息回写。
+          以架构图替代代码页，告诉听众扩展点在哪里。
         </aside>
       </section>
 
       <section data-part="2">
-        <h2>真实代码：最小闭环真的很短</h2>
+        <h2>stop_reason 是模型和 Harness 的最小协议</h2>
+        <div class="layout-3">
+          <div class="panel"><h3>end_turn</h3><p>模型认为当前任务可以交付，Harness 把文本返回给用户。</p></div>
+          <div class="panel"><h3>tool_use</h3><p>模型需要外部事实或副作用，Harness 执行工具并回写结果。</p></div>
+          <div class="panel"><h3>error / limit</h3><p>真实系统还要处理异常、限流、上下文溢出、超时和取消。</p></div>
+        </div>
+        <div class="takeaway"><strong>协议小，系统才稳。</strong>模型不需要知道工具内部实现，只需要表达“我要什么能力”。</div>
+        <p class="source">来源：OpenClaw light S01/S02；AI-Agent S01/S02</p>
+        <aside class="notes">
+          用协议视角讲 stop_reason，让它不只是 API 字段。
+        </aside>
+      </section>
+
+      <section data-part="2">
+        <h2>Tool 不是函数列表，而是控制面 + 执行面</h2>
+        <div class="layout-2">
+          <div class="panel">
+            <h3>控制面：Schema</h3>
+            <p>告诉模型有什么工具、什么时候用、输入长什么样。它影响模型的选择。</p>
+          </div>
+          <div class="panel">
+            <h3>执行面：Handler</h3>
+            <p>真正读文件、写文件、跑 Shell、发消息。它影响真实世界的状态。</p>
+          </div>
+        </div>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+flowchart LR
+  Schema["Tool Schema<br/>model-facing contract"] --> Choice["Model chooses<br/>tool_use"]
+  Choice --> Gate["Policy Gate<br/>allow / deny / ask"]
+  Gate --> Handler["Handler<br/>side effects"]
+  Handler --> Result["tool_result<br/>back to context"]
+          </div>
+        </div>
+        <aside class="notes">
+          旧版展示 Handler Map 代码太早。这里先讲为什么要分成控制面和执行面。
+        </aside>
+      </section>
+
+      <section data-part="2">
+        <h2>Context 是 Agent 的工作记忆，不只是聊天记录</h2>
+        <div class="layout-4">
+          <div class="panel tight"><h3>目标</h3><p>用户到底要完成什么。</p></div>
+          <div class="panel tight"><h3>过程</h3><p>已经尝试过什么，失败在哪里。</p></div>
+          <div class="panel tight"><h3>事实</h3><p>文件、工具输出、环境状态。</p></div>
+          <div class="panel tight"><h3>约束</h3><p>权限、风格、系统提示词。</p></div>
+        </div>
+        <div class="takeaway"><strong>Agent 失忆通常不是模型突然变笨。</strong>更多时候是上下文组织、压缩、持久化和回写策略出了问题。</div>
+        <p class="source">来源：AI-Agent README “Context is the agent's memory”；OpenClaw S03/S06</p>
+        <aside class="notes">
+          让听众知道上下文管理为什么贯穿后续所有部分。
+        </aside>
+      </section>
+
+      <section data-part="2">
+        <h2>Agent 的边界：模型做选择，系统管后果</h2>
+        <table>
+          <thead>
+            <tr><th>问题</th><th>模型负责</th><th>Harness 负责</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>下一步做什么</td><td>基于上下文选择行动</td><td>提供清晰工具和反馈</td></tr>
+            <tr><td>能不能做</td><td>解释意图</td><td>权限、策略、人工确认</td></tr>
+            <tr><td>做坏了怎么办</td><td>利用错误反馈调整</td><td>重试、回滚、隔离、恢复</td></tr>
+            <tr><td>记住什么</td><td>识别哪些信息重要</td><td>压缩、持久化、检索、注入</td></tr>
+          </tbody>
+        </table>
+        <div class="takeaway"><strong>边界越清楚，系统越容易扩展。</strong>生产级 Agent 的复杂度大多来自 Harness，而不是 Loop 本身。</div>
+        <aside class="notes">
+          这是第二部分的小结页。
+        </aside>
+      </section>
+
+      <section data-part="3" class="chapter">
+        <div class="eyebrow">Part 3 / From Loop To Usable</div>
+        <h2>让 Agent 可用：管理信息，而不是堆功能</h2>
+        <p class="subtitle">规划、技能、子 Agent、压缩、多渠道，本质上都在解决一个问题：模型这轮到底应该看见什么？</p>
+        <div class="chapter-line"></div>
+        <aside class="notes">
+          第三部分重心从“有什么功能”改为“这些功能在管理什么信息”。
+        </aside>
+      </section>
+
+      <section data-part="3">
+        <h2>最小 Loop 很快会遇到四类失败</h2>
+        <div class="layout-4">
+          <div class="panel tight"><h3>遗忘</h3><p>历史太长，关键约束被挤掉。</p></div>
+          <div class="panel tight"><h3>跑偏</h3><p>任务没有外化计划，模型反复换方向。</p></div>
+          <div class="panel tight"><h3>过载</h3><p>把所有知识一次塞进 prompt。</p></div>
+          <div class="panel tight"><h3>失控</h3><p>工具副作用没有权限、审计和恢复。</p></div>
+        </div>
+        <div class="takeaway"><strong>所以项目课程不是在堆 feature。</strong>它们是在逐步补齐一个能长期工作的运行系统。</div>
+        <aside class="notes">
+          这页解释为什么从 S03 开始会出现 Todo、Skill、Context Compact 等机制。
+        </aside>
+      </section>
+
+      <section data-part="3">
+        <h2>规划：把“我要做什么”从脑子里拿出来</h2>
+        <div class="layout-2">
+          <div class="panel">
+            <h3>TodoWrite</h3>
+            <p>计划不是替模型思考，而是让模型把中间目标写成外部状态，后续每轮都能看见。</p>
+          </div>
+          <div class="panel">
+            <h3>Nag Reminder</h3>
+            <p>如果多轮没有更新计划，系统把提醒插回上下文，逼模型重新对齐任务状态。</p>
+          </div>
+        </div>
+        <div class="takeaway"><strong>核心原则：</strong>长期任务不要只靠模型隐式记忆，要把进度变成可检查的状态。</div>
+        <p class="source">来源：AI-Agent S03 TodoWrite；README 核心机制一览</p>
+        <aside class="notes">
+          讲规划能力不要陷入代码，重点是状态外化。
+        </aside>
+      </section>
+
+      <section data-part="3">
+        <h2>技能：知识要按需加载，不要一次塞满</h2>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+flowchart LR
+  Catalog["Skill Catalog<br/>name + description"] --> Prompt["Light prompt<br/>cheap awareness"]
+  Prompt --> Need{"Need detail?"}
+  Need -->|"yes"| Load["load_skill<br/>full body"]
+  Need -->|"no"| Work["Continue task"]
+  Load --> Work
+          </div>
+        </div>
+        <div class="takeaway"><strong>两层知识注入的价值：</strong>先让模型知道“有什么”，只有需要时再给它“全部内容”。</div>
+        <p class="source">来源：AI-Agent S05 Skill Loading</p>
+        <aside class="notes">
+          这比展示 describeAvailable/loadFullText 代码更容易理解。
+        </aside>
+      </section>
+
+      <section data-part="3">
+        <h2>子 Agent：开一个干净脑袋，带回摘要</h2>
+        <div class="layout-3">
+          <div class="panel"><h3>独立上下文</h3><p>子 Agent 不继承父 Agent 的全部消息历史，减少干扰。</p></div>
+          <div class="panel"><h3>专注任务</h3><p>适合搜索、分析、验证这类边界清楚的子问题。</p></div>
+          <div class="panel"><h3>压缩返回</h3><p>父 Agent 只拿回结果摘要，而不是整个探索过程。</p></div>
+        </div>
+        <div class="takeaway"><strong>这不是并发技巧。</strong>它首先是上下文隔离技巧。</div>
+        <p class="source">来源：AI-Agent S04 Subagent</p>
+        <aside class="notes">
+          强调“Process = Context Isolation”这一模式。
+        </aside>
+      </section>
+
+      <section data-part="3">
+        <h2>压缩：不是丢历史，而是重建继续工作的记忆</h2>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+flowchart TD
+  Raw["Raw History<br/>long and noisy"] --> Detect["Token pressure<br/>or overflow"]
+  Detect --> Summarize["Summarize<br/>goal / facts / decisions / open work"]
+  Summarize --> Rebuild["Rebuild Context<br/>summary + current state"]
+  Rebuild --> Continue["Continue task"]
+          </div>
+        </div>
+        <div class="takeaway"><strong>好的 compact 不是一句“之前聊过很多”。</strong>它必须保留目标、已做决策、关键事实、未完成动作。</div>
+        <p class="source">来源：AI-Agent S06 Context Compact；OpenClaw S03 Context Guard</p>
+        <aside class="notes">
+          这里把 AI-Agent 的压缩和 OpenClaw 的 ContextGuard 统一起来讲。
+        </aside>
+      </section>
+
+      <section data-part="3">
+        <h2>Channel 抽象：让 Agent 不关心消息来自哪里</h2>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+flowchart LR
+  CLI["CLI"] --> Normalize["InboundMessage"]
+  Telegram["Telegram"] --> Normalize
+  Feishu["Feishu"] --> Normalize
+  Normalize --> Gateway["Gateway / Routing"]
+  Gateway --> Loop["Agent Loop"]
+  Loop --> Delivery["Delivery Adapter"]
+          </div>
+        </div>
+        <div class="takeaway"><strong>平台差异要挡在 Loop 外面。</strong>Agent 只处理标准化消息，不应该知道 Telegram 或飞书的细节。</div>
+        <p class="source">来源：OpenClaw S04 Channels；S05 Gateway &amp; Routing</p>
+        <aside class="notes">
+          这页说明 OpenClaw 为什么从 CLI 走向 Gateway。
+        </aside>
+      </section>
+
+      <section data-part="3">
+        <h2>这一层所有机制，都在回答同一个问题</h2>
+        <table>
+          <thead>
+            <tr><th>机制</th><th>解决的问题</th><th>架构位置</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>TodoWrite</td><td>任务进度不要只存在模型隐式记忆里</td><td>Context 状态外化</td></tr>
+            <tr><td>Skill Loading</td><td>知识太多，不能一次塞进 prompt</td><td>Context 按需注入</td></tr>
+            <tr><td>Subagent</td><td>复杂探索会污染主线对话</td><td>Context 隔离</td></tr>
+            <tr><td>Context Guard</td><td>历史和工具结果会挤爆窗口</td><td>Context 恢复</td></tr>
+            <tr><td>Channel</td><td>平台事件格式不一致</td><td>Input 标准化</td></tr>
+          </tbody>
+        </table>
+        <div class="takeaway"><strong>主线不是“功能越来越多”。</strong>主线是让模型每一轮看到更正确、更少噪声、更可行动的信息。</div>
+        <aside class="notes">
+          第三部分总结页，帮助听众把机制归类。
+        </aside>
+      </section>
+
+      <section data-part="4" class="chapter">
+        <div class="eyebrow">Part 4 / Production Agent</div>
+        <h2>生产级 Agent：先兜底，再变聪明</h2>
+        <p class="subtitle">能跑 demo 不难；难的是工具有副作用、消息不能丢、上下文会溢出、请求会失败、多人会并发。</p>
+        <div class="chapter-line"></div>
+        <aside class="notes">
+          第四部分讲工程底线，少讲实现细节，多讲为什么生产系统要这样拆。
+        </aside>
+      </section>
+
+      <section data-part="4">
+        <h2>生产级底线：四件事必须可控</h2>
+        <div class="layout-4">
+          <div class="panel tight"><h3>权限</h3><p>危险工具必须能拦截、询问、审计。</p></div>
+          <div class="panel tight"><h3>恢复</h3><p>上下文溢出、限流、超时要有路径。</p></div>
+          <div class="panel tight"><h3>投递</h3><p>消息先落盘，再发给外部渠道。</p></div>
+          <div class="panel tight"><h3>并发</h3><p>同一对象上的请求要排队或隔离。</p></div>
+        </div>
+        <div class="takeaway"><strong>Agent 越能行动，越需要工程刹车。</strong>没有这些底线，智能越强，事故半径越大。</div>
+        <aside class="notes">
+          这页是生产部分的总纲。
+        </aside>
+      </section>
+
+      <section data-part="4">
+        <h2>权限和 Hook：在工具调用前后加护栏</h2>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+flowchart LR
+  ToolUse["tool_use"] --> Pre["PreToolUse<br/>policy / ask / deny"]
+  Pre --> Execute["Execute Tool"]
+  Execute --> Post["PostToolUse<br/>log / observe / transform"]
+  Post --> Result["tool_result"]
+          </div>
+        </div>
+        <div class="layout-3">
+          <div class="panel tight"><h3>权限</h3><p>决定能不能做。</p></div>
+          <div class="panel tight"><h3>Hook</h3><p>在生命周期里插入扩展。</p></div>
+          <div class="panel tight"><h3>审计</h3><p>给生产排障留证据。</p></div>
+        </div>
+        <p class="source">来源：AI-Agent S07 Permission System；S08 Hook System</p>
+        <aside class="notes">
+          不展示权限代码，讲清楚它在工具链路的位置。
+        </aside>
+      </section>
+
+      <section data-part="4">
+        <h2>Prompt 组装：把人格、工具、记忆变成运行时配置</h2>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+flowchart TD
+  Identity["Identity"] --> Soul["Soul / Style"]
+  Soul --> Tools["Tools Guide"]
+  Tools --> Skills["Skills"]
+  Skills --> Memory["Memory"]
+  Memory --> Bootstrap["Bootstrap"]
+  Bootstrap --> Runtime["Runtime State"]
+  Runtime --> Channel["Channel Hint"]
+          </div>
+        </div>
+        <div class="takeaway"><strong>系统提示词不是一段文案。</strong>在生产系统里，它更像按层装配的运行时配置。</div>
+        <p class="source">来源：OpenClaw S06 Intelligence；enterprise PromptAssembler</p>
+        <aside class="notes">
+          这页保留八层提示词，但不再配代码。重点是“按层组装”的工程意义。
+        </aside>
+      </section>
+
+      <section data-part="4">
+        <h2>记忆检索：不要把长期记忆全塞进上下文</h2>
+        <div class="layout-3">
+          <div class="panel"><h3>持久化</h3><p>跨会话保存重要事实、偏好、经验和项目状态。</p></div>
+          <div class="panel"><h3>检索</h3><p>按当前任务召回相关记忆，而不是全量注入。</p></div>
+          <div class="panel"><h3>重排</h3><p>通过相关性和多样性控制噪声。</p></div>
+        </div>
+        <div class="takeaway"><strong>长期记忆的核心风险是污染上下文。</strong>召回得太少会遗忘，召回得太多会误导。</div>
+        <p class="source">来源：AI-Agent S09 Memory System；OpenClaw S06 混合记忆检索</p>
+        <aside class="notes">
+          用数据检索视角解释记忆，而不是展示搜索代码。
+        </aside>
+      </section>
+
+      <section data-part="4">
+        <h2>恢复策略：失败不是 if/else，而是分层处理</h2>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+flowchart TD
+  Call["Call Model"] --> Auth{"Auth / Rate Limit?"}
+  Auth -->|"yes"| Rotate["Rotate profile<br/>or backoff"]
+  Auth -->|"no"| Context{"Context overflow?"}
+  Context -->|"yes"| Compact["Truncate / compact<br/>then retry"]
+  Context -->|"no"| Tool{"Tool failure?"}
+  Tool -->|"yes"| Retry["Retry tool loop<br/>with feedback"]
+  Tool -->|"no"| Done["Return"]
+          </div>
+        </div>
+        <div class="takeaway"><strong>三层重试洋葱：</strong>认证与限流、上下文恢复、工具循环，各自有不同的恢复动作。</div>
+        <p class="source">来源：OpenClaw S09 Resilience；S03 Context Guard</p>
+        <aside class="notes">
+          讲清楚为什么重试不能一把梭。
+        </aside>
+      </section>
+
+      <section data-part="4">
+        <h2>消息投递：先落盘，再发出去</h2>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+sequenceDiagram
+  participant A as Agent
+  participant Q as WAL Queue
+  participant D as Disk
+  participant C as Channel
+  A->>Q: enqueue(message)
+  Q->>D: tmp write + fsync + rename
+  Q->>C: deliver
+  alt success
+    C-->>Q: ack
+    Q->>D: delete pending
+  else failure
+    C-->>Q: error
+    Q->>D: keep + retry metadata
+  end
+          </div>
+        </div>
+        <div class="takeaway"><strong>投递系统要假设外部平台会失败。</strong>WAL 的价值是让“发没发出去”有可恢复状态。</div>
+        <p class="source">来源：OpenClaw S08 Delivery</p>
+        <aside class="notes">
+          用时序图替代原子写代码。
+        </aside>
+      </section>
+
+      <section data-part="4">
+        <h2>并发：给不同类型工作安排不同车道</h2>
+        <div class="layout-3">
+          <div class="panel"><h3>main</h3><p>用户主动请求，通常要求顺序和低延迟。</p></div>
+          <div class="panel"><h3>cron</h3><p>定时任务，适合独立车道和限流。</p></div>
+          <div class="panel"><h3>heartbeat</h3><p>主动检查和后台触发，需要去重和降噪。</p></div>
+        </div>
+        <div class="takeaway"><strong>并发不是越多越好。</strong>Agent 的状态很容易被交错请求污染，车道队列先保证顺序边界。</div>
+        <p class="source">来源：OpenClaw S10 Concurrency；AI-Agent S13/S14</p>
+        <aside class="notes">
+          让听众理解 lane queue 的作用，而不是陷入虚拟线程细节。
+        </aside>
+      </section>
+
+      <section data-part="4">
+        <h2>从教学版到生产版：变化的是组织方式</h2>
+        <table>
+          <thead>
+            <tr><th>维度</th><th>教学版</th><th>生产版</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>代码组织</td><td>每课一文件，低认知负担</td><td>按 gateway、tool、memory、delivery、resilience 拆包</td></tr>
+            <tr><td>状态</td><td>本地文件或内存演示</td><td>持久化、恢复、指标、健康检查</td></tr>
+            <tr><td>扩展</td><td>手写 Map 和简单接口</td><td>Spring Boot 注入、模块边界、部署清单</td></tr>
+            <tr><td>目标</td><td>看懂机制</td><td>控制风险、支撑运维和演进</td></tr>
+          </tbody>
+        </table>
+        <p class="source">来源：OpenClaw README；enterprise-claw-4j 源码结构</p>
+        <aside class="notes">
+          这页连接教学项目和生产项目。
+        </aside>
+      </section>
+
+      <section data-part="5" class="chapter">
+        <div class="eyebrow">Part 5 / Multi-Agent And Gateway</div>
+        <h2>多 Agent：复杂度来自边界，而不是数量</h2>
+        <p class="subtitle">多开几个模型很容易；让它们可靠通信、分工、隔离和收敛才是难点。</p>
+        <div class="chapter-line"></div>
+        <aside class="notes">
+          第五部分把 AI-Agent Teams 和 OpenClaw Gateway 放在一起讲。
+        </aside>
+      </section>
+
+      <section data-part="5">
+        <h2>多 Agent 首先要回答四个工程问题</h2>
+        <div class="layout-4">
+          <div class="panel tight"><h3>谁</h3><p>身份、角色、权限和责任边界。</p></div>
+          <div class="panel tight"><h3>说什么</h3><p>消息格式、状态、确认和失败语义。</p></div>
+          <div class="panel tight"><h3>改哪里</h3><p>文件所有权、任务归属、目录隔离。</p></div>
+          <div class="panel tight"><h3>怎么停</h3><p>完成、取消、交接、超时和恢复。</p></div>
+        </div>
+        <div class="takeaway"><strong>多 Agent 的核心不是“更聪明”。</strong>它首先是分布式协作问题。</div>
+        <aside class="notes">
+          这一页为邮箱、协议、worktree 做铺垫。
+        </aside>
+      </section>
+
+      <section data-part="5">
+        <h2>JSONL 邮箱：最小可恢复通信协议</h2>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+flowchart LR
+  Lead["lead"] -->|"append JSONL"| AliceInbox[".team/inbox/alice.jsonl"]
+  Alice["alice"] -->|"append JSONL"| LeadInbox[".team/inbox/lead.jsonl"]
+  AliceInbox --> Alice
+  LeadInbox --> Lead
+  Alice --> Tasks["shared task state"]
+  Lead --> Tasks
+          </div>
+        </div>
+        <div class="takeaway"><strong>JSONL 的价值不是高级。</strong>它简单、可追加、可审计、崩溃后还能继续读。</div>
+        <p class="source">来源：AI-Agent S15 Agent Teams</p>
+        <aside class="notes">
+          强调邮箱模型的可靠性和可解释性。
+        </aside>
+      </section>
+
+      <section data-part="5">
+        <h2>握手协议：协作需要状态机</h2>
+        <div class="layout-3">
+          <div class="panel"><h3>Plan Approval</h3><p>执行前先让对方确认计划，降低跑偏成本。</p></div>
+          <div class="panel"><h3>Shutdown</h3><p>不是直接退出，而是发出意图、等待确认、交接状态。</p></div>
+          <div class="panel"><h3>Timeout</h3><p>对方不响应时，系统要能继续前进或升级处理。</p></div>
+        </div>
+        <div class="takeaway"><strong>协议让协作可恢复。</strong>没有状态机，多 Agent 很快会变成互相丢消息。</div>
+        <p class="source">来源：AI-Agent S16 Team Protocols</p>
+        <aside class="notes">
+          以协议而非代码讲 S16。
+        </aside>
+      </section>
+
+      <section data-part="5">
+        <h2>Worktree 隔离：并行工作先隔离目录</h2>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+flowchart TD
+  Task["Task"] --> Claim["Agent claims work"]
+  Claim --> Worktree["Create git worktree"]
+  Worktree --> Edit["Edit in isolated directory"]
+  Edit --> Review["Review / merge"]
+  Review --> Cleanup["Cleanup worktree"]
+          </div>
+        </div>
+        <div class="takeaway"><strong>隔离不是洁癖。</strong>多个 Agent 同时改同一个仓库时，目录级隔离能显著降低冲突和误删风险。</div>
+        <p class="source">来源：AI-Agent S18 Worktree Isolation</p>
+        <aside class="notes">
+          讲所有权和隔离，避免只讲 git 命令。
+        </aside>
+      </section>
+
+      <section data-part="5">
+        <h2>MCP：把外部能力接进统一工具控制面</h2>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+flowchart LR
+  Agent["Agent Loop"] --> Router["Tool Router"]
+  Router --> Builtin["Built-in Tools"]
+  Router --> MCP["MCP Router"]
+  MCP --> Stdio["JSON-RPC 2.0<br/>over stdio"]
+  Stdio --> Server["External MCP Server"]
+          </div>
+        </div>
+        <div class="takeaway"><strong>MCP 的关键价值：</strong>外部工具仍然走同一个 schema、权限、执行、结果回写链路。</div>
+        <p class="source">来源：AI-Agent S19 MCP Plugin</p>
+        <aside class="notes">
+          避免讲协议细节，聚焦控制面统一。
+        </aside>
+      </section>
+
+      <section data-part="5">
+        <h2>Gateway Routing：先找到 Agent，再进 Loop</h2>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+flowchart TD
+  Msg["Inbound Message"] --> Peer["peer binding"]
+  Peer --> Guild["guild binding"]
+  Guild --> Account["account binding"]
+  Account --> Channel["channel binding"]
+  Channel --> Default["default agent"]
+  Default --> Loop["Agent Loop"]
+          </div>
+        </div>
+        <div class="takeaway"><strong>Gateway 的问题不是“怎么调用模型”。</strong>它首先要决定这条消息属于谁、以什么身份处理、结果发回哪里。</div>
+        <p class="source">来源：OpenClaw S05 Gateway &amp; Routing</p>
+        <aside class="notes">
+          这页把 OpenClaw 的 Gateway 路由和 Agent Loop 连接起来。
+        </aside>
+      </section>
+
+      <section data-part="6" class="chapter">
+        <div class="eyebrow">Part 6 / Learning Path</div>
+        <h2>怎么把这些机制学成一张图</h2>
+        <p class="subtitle">源码是证据，不是主线。主线是：模型如何行动，系统如何约束行动，失败如何恢复。</p>
+        <div class="chapter-line"></div>
+        <aside class="notes">
+          第六部分总结学习路径和设计原则。
+        </aside>
+      </section>
+
+      <section data-part="6">
+        <h2>从 29 个 Session 提炼成 6 层架构</h2>
+        <div class="mermaid-wrap">
+          <div class="mermaid">
+flowchart TD
+  UX["Channels / Gateway"] --> Runtime["Agent Runtime"]
+  Runtime --> Context["Context / Memory / Skills"]
+  Runtime --> Tools["Tools / MCP"]
+  Tools --> Policy["Permission / Hooks"]
+  Runtime --> Recovery["Compact / Retry / WAL"]
+  Runtime --> Team["Teams / Worktree"]
+  Recovery --> Ops["Operations<br/>metrics / health / deployment"]
+          </div>
+        </div>
+        <div class="takeaway"><strong>学习顺序是线性的，系统结构是分层的。</strong>不要把课程顺序误认为架构边界。</div>
+        <aside class="notes">
+          这一页替代旧版的大量代码页，建立整体结构。
+        </aside>
+      </section>
+
+      <section data-part="6">
+        <h2>核心设计原则 Top 8</h2>
+        <div class="principle-grid">
+          <div class="principle"><div class="num">01</div><div class="text">让模型做选择，让 Harness 管边界。</div></div>
+          <div class="principle"><div class="num">02</div><div class="text">所有副作用都经过工具、权限和审计。</div></div>
+          <div class="principle"><div class="num">03</div><div class="text">长期任务把进度外化成状态。</div></div>
+          <div class="principle"><div class="num">04</div><div class="text">知识按需注入，避免 prompt 变垃圾场。</div></div>
+          <div class="principle"><div class="num">05</div><div class="text">上下文压缩要保留可继续工作的事实。</div></div>
+          <div class="principle"><div class="num">06</div><div class="text">外部平台先标准化，再进入 Agent Loop。</div></div>
+          <div class="principle"><div class="num">07</div><div class="text">失败分层处理，不能只有重试按钮。</div></div>
+          <div class="principle"><div class="num">08</div><div class="text">多 Agent 先定义协议和所有权。</div></div>
+        </div>
+        <aside class="notes">
+          这页是可带走的设计清单。
+        </aside>
+      </section>
+
+      <section data-part="6">
+        <h2>两个项目的互补关系</h2>
+        <table>
+          <thead>
+            <tr><th>学习目标</th><th>更适合看 AI-Agent</th><th>更适合看 OpenClaw</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>理解 Agent Loop</td><td>从最小 coding agent 逐步扩展</td><td>从 stop_reason 和工具内循环理解协议</td></tr>
+            <tr><td>理解上下文</td><td>Todo、Skill、Subagent、Compact</td><td>Session、ContextGuard、八层提示词</td></tr>
+            <tr><td>理解生产风险</td><td>权限、Hook、Memory、MCP</td><td>WAL、Resilience、Concurrency、enterprise</td></tr>
+            <tr><td>理解多 Agent</td><td>邮箱、协议、自治、Worktree</td><td>Gateway 路由、多渠道、多 Agent 管理</td></tr>
+          </tbody>
+        </table>
+        <div class="takeaway"><strong>一个教 Runtime，一个教 Gateway。</strong>合起来看，才是一套完整 Agent 系统。</div>
+        <aside class="notes">
+          总结两个项目如何一起使用。
+        </aside>
+      </section>
+
+      <section data-part="6">
+        <h2>Q&amp;A：接下来可以沿三条路线深入</h2>
+        <div class="layout-3">
+          <div class="panel"><h3>Runtime 路线</h3><p>Loop、Tools、Todo、Skill、Subagent、Compact、Permission、Hook。</p></div>
+          <div class="panel"><h3>Gateway 路线</h3><p>Channels、Routing、Delivery、Resilience、Concurrency、enterprise 部署。</p></div>
+          <div class="panel"><h3>协作路线</h3><p>Teams、Protocol、Autonomous、Worktree、MCP。</p></div>
+        </div>
+        <div class="takeaway"><strong>源码阅读建议：</strong>先按本页路线选 3-5 个 Session 跑通，再回头看完整课程。</div>
+        <aside class="notes">
+          主讲结束，留 5-8 分钟 Q&amp;A。
+        </aside>
+      </section>
+
+      <section data-part="7" data-visibility="uncounted">
+        <div class="appendix-badge">Appendix A1</div>
+        <h2>真实代码：最小 Loop 只保留一眼能懂的片段</h2>
         <div class="code-card">
           <div class="code-title">
             <span>AI-Agent S01：agentLoop</span>
@@ -671,64 +1341,19 @@ flowchart TD
           </div>
           <pre><code class="language-java">private static void agentLoop(AnthropicClient client, LoopState state) {
     while (runOneTurn(client, state)) {
-        // 什么额外逻辑都不加 —— 这是教学版的核心约束
         // 后续章节会在这里插入日志、权限检查、上下文压缩等
     }
 }</code></pre>
         </div>
-        <div class="takeaway">这段代码的重点不是“短”，而是把所有增强都放在 loop 外围。</div>
+        <div class="takeaway"><strong>为什么放附录：</strong>这段代码很重要，但它不是主讲重点；重点是它暴露出的扩展位置。</div>
         <aside class="notes">
-          代码来自真实源码。S01 只有 bash 工具，但结构已经和后续章节保持一致。
+          如果有人追问“5 行 Loop 到底长什么样”，再展示这页。
         </aside>
       </section>
 
-      <section data-part="2">
-        <h2>stop_reason 是模型给 Harness 的交通灯</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>OpenClaw S01：stop_reason 分支</span>
-            <span>vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S01AgentLoop.java:134-156</span>
-          </div>
-          <pre><code class="language-java">StopReason reason = response.stopReason().orElse(null);
-
-if (StopReason.END_TURN.equals(reason)) {
-    String assistantText = response.content().stream()
-            .filter(ContentBlock::isText)
-            .map(ContentBlock::asText)
-            .map(TextBlock::text)
-            .collect(Collectors.joining());
-    AnsiColors.printAssistant(assistantText);
-    messages.add(response.toParam());
-} else if (StopReason.TOOL_USE.equals(reason)) {
-    AnsiColors.printInfo("[stop_reason=tool_use] No tools available in this section.");
-    messages.add(response.toParam());
-}</code></pre>
-        </div>
-        <aside class="notes">
-          S01 还没有执行工具，但已经显式展示 stop_reason 分发。S02 只是在 tool_use 分支补上工具执行。
-        </aside>
-      </section>
-
-      <section data-part="2">
-        <h2>Tool Dispatch：Schema 表告诉模型，Handler 表改变世界</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart LR
-  S["Tool Schema<br/>name / description<br/>JSON Schema"] --> L["LLM decides<br/>tool_use"]
-  L --> H["Handler Map<br/>toolName -> function"]
-  H --> E["Side Effects<br/>FS / Shell<br/>Memory / MCP"]
-  E --> R["tool_result"]
-  R --> L
-          </div>
-        </div>
-        <div class="takeaway">同一个问题，不同边界：教学版手写 Map，生产版用 Spring 注入 ToolHandler。</div>
-        <aside class="notes">
-          这是基于 S02ToolUse.java 和 enterprise ToolRegistry 的归纳。Schema 与 Handler 分离是后续插件化的基础。
-        </aside>
-      </section>
-
-      <section data-part="2">
-        <h2>真实代码：四个工具就是四个函数入口</h2>
+      <section data-part="7" data-visibility="uncounted">
+        <div class="appendix-badge">Appendix A2</div>
+        <h2>真实代码：Tool Dispatch 的最小形态</h2>
         <div class="code-card">
           <div class="code-title">
             <span>OpenClaw S02：TOOL_HANDLERS</span>
@@ -741,347 +1366,22 @@ static {
     TOOL_HANDLERS.put("read_file", S02ToolUse::toolReadFile);
     TOOL_HANDLERS.put("write_file", S02ToolUse::toolWriteFile);
     TOOL_HANDLERS.put("edit_file", S02ToolUse::toolEditFile);
-}
-
-static String processToolCall(String toolName, Map&lt;String, Object&gt; toolInput) {
-    var handler = TOOL_HANDLERS.get(toolName);
-    if (handler == null) return "Error: Unknown tool '" + toolName + "'";
-    return handler.apply(toolInput);
 }</code></pre>
         </div>
         <aside class="notes">
-          真实源码中 processToolCall 有 try/catch，这里保留关键语义并删节了错误包装。
+          这页只在需要代码证据时讲。主讲页已经用控制面/执行面解释过。
         </aside>
       </section>
 
-      <section data-part="2">
-        <h2>两个项目的 S01/S02：同一个 Loop，不同教学边界</h2>
-        <table>
-          <thead>
-            <tr><th>切面</th><th>AI-Agent-ZeroToOne</th><th>OpenClaw-ZeroToOne</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>主问题</td><td>从零写 coding agent</td><td>从零写 Agent Gateway</td></tr>
-            <tr><td>S01</td><td>LoopState + bash</td><td>messages + stop_reason</td></tr>
-            <tr><td>S02</td><td>dispatch map + normalizeMessages</td><td>JSON Schema + 4 工具内循环</td></tr>
-            <tr><td>取舍</td><td>强调模型是 Agent</td><td>强调网关可扩展边界</td></tr>
-          </tbody>
-        </table>
-        <div class="source">来源：两个 README；S01AgentLoop.java；S02ToolUse.java</div>
-        <aside class="notes">
-          这页要讲“相同问题，不同取舍”：不是谁更好，而是教学目标不同。
-        </aside>
-      </section>
-
-      <section data-part="2">
-        <h2>你写的不是智能本身，而是智能可行动的运行环境</h2>
-        <div class="layout-3">
-          <div class="panel"><h3>工具</h3><p>让模型能影响文件系统、Shell、记忆和外部服务。</p></div>
-          <div class="panel"><h3>上下文</h3><p>让模型知道刚才发生了什么，并在窗口限制内继续工作。</p></div>
-          <div class="panel"><h3>控制面</h3><p>让动作可治理：权限、Hook、重试、投递和路由。</p></div>
-        </div>
-        <div class="takeaway"><strong>本节 takeaway：</strong>Loop 是骨架，Tools 是手，Context 是短期记忆，其他都是让它可靠工作的工程装置。</div>
-        <aside class="notes">
-          接下来进入从 Loop 到“可用”的问题：计划、知识、上下文爆炸。
-        </aside>
-      </section>
-
-      <section data-part="3" class="chapter">
-        <div class="eyebrow">Part 3 / From Loop To Usable Agent</div>
-        <h2>5 行 Loop 很快会失控</h2>
-        <p class="subtitle">真实任务会带来遗忘、跑偏、无计划、上下文爆炸和跨平台输入差异。</p>
-        <div class="chapter-line"></div>
-        <aside class="notes">
-          这一部分讲 AI-Agent 的 S03-S06 与 OpenClaw 的 S03-S04，它们都在解决“Loop 能跑但不稳定”的问题。
-        </aside>
-      </section>
-
-      <section data-part="3">
-        <h2>TodoWrite：给模型一个会催它更新的清单</h2>
+      <section data-part="7" data-visibility="uncounted">
+        <div class="appendix-badge">Appendix A3</div>
+        <h2>真实代码：PromptAssembler 是“按层装配”</h2>
         <div class="code-card">
           <div class="code-title">
-            <span>AI-Agent S03：Nag Reminder</span>
-            <span>vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S03TodoWrite.java:609-625</span>
+            <span>enterprise PromptAssembler</span>
+            <span>vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/src/main/java/com/openclaw/enterprise/intelligence/PromptAssembler.java:55-114</span>
           </div>
-          <pre><code class="language-java">if (usedTodo) {
-    todo.resetRoundCounter();
-} else {
-    todo.noteRoundWithoutUpdate();
-    String reminder = todo.reminder();
-    if (reminder != null) {
-        toolResults.addFirst(ContentBlockParam.ofText(
-                TextBlockParam.builder()
-                        .text(reminder)
-                        .build()));
-    }
-}
-state.paramsBuilder.addUserMessageOfBlockParams(toolResults);</code></pre>
-        </div>
-        <aside class="notes">
-          这是 Self-Tracking with Nag：不是代码替模型规划，而是持续把计划状态推回模型上下文。
-        </aside>
-      </section>
-
-      <section data-part="3">
-        <h2>Subagent：开一个干净脑袋，最后只带回摘要</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>AI-Agent S04：runSubagent</span>
-            <span>vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S04Subagent.java:641-655,721-723</span>
-          </div>
-          <pre><code class="language-java">private static String runSubagent(AnthropicClient client, String model, String prompt) {
-    var subBuilder = MessageCreateParams.builder()
-            .model(model)
-            .maxTokens(8000L)
-            .system(SUBAGENT_SYSTEM);
-
-    for (Tool tool : CHILD_TOOLS) {
-        subBuilder.addTool(tool);
-    }
-    subBuilder.addUserMessage(prompt);
-    // ...
-    // 子 Agent 的整个上下文到这里就被丢弃了
-    return texts.isEmpty() ? "(no summary)" : String.join("", texts);
-}</code></pre>
-        </div>
-        <aside class="notes">
-          关键语义：子 Agent 的消息历史从零开始，不继承父 Agent 对话；返回摘要给父 Agent。
-        </aside>
-      </section>
-
-      <section data-part="3">
-        <h2>Skill：别把所有知识一次性塞进提示词</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>AI-Agent S05：两层知识注入</span>
-            <span>vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S05SkillLoading.java:431-464,475-479</span>
-          </div>
-          <pre><code class="language-java">String describeAvailable() {
-    if (documents.isEmpty()) return "(no skills available)";
-    var lines = new ArrayList&lt;String&gt;();
-    for (var entry : documents.entrySet()) {
-        lines.add("- " + entry.getKey() + ": "
-                + entry.getValue().getOrDefault("description", "No description"));
-    }
-    return String.join("\n", lines);
-}
-
-String loadFullText(String name) {
-    var doc = documents.get(name);
-    return "&lt;skill name=\"" + doc.get("name") + "\"&gt;\n"
-            + doc.get("body") + "\n&lt;/skill&gt;";
-}</code></pre>
-        </div>
-        <aside class="notes">
-          Layer 1 注入 metadata，Layer 2 通过 load_skill 工具按需拿 body。这样 prompt 先保持轻。
-        </aside>
-      </section>
-
-      <section data-part="3">
-        <h2>Context Compact：把历史压成“可继续工作的摘要”</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>AI-Agent S06：autoCompact 重建历史</span>
-            <span>vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S06ContextCompact.java:633-662</span>
-          </div>
-          <pre><code class="language-java">MessageCreateParams.Builder newBuilder = MessageCreateParams.builder()
-        .model(model)
-        .maxTokens(MAX_TOKENS)
-        .system(systemPrompt);
-
-for (Tool tool : tools) {
-    newBuilder.addTool(tool);
-}
-
-String compactedMessage = "This conversation was compacted so the agent can continue working.\n\n"
-        + summary;
-newBuilder.addUserMessage(compactedMessage);
-newBuilder.addAssistantMessage("Understood. I have the context summary. Ready to continue.");
-return newBuilder;</code></pre>
-        </div>
-        <aside class="notes">
-          这里不是丢历史，而是用摘要替换整个对话历史，并保留“我已理解摘要”的 assistant ack。
-        </aside>
-      </section>
-
-      <section data-part="3">
-        <h2>OpenClaw ContextGuard：同一个问题，网关版叫“溢出恢复”</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart TD
-  A["Call API"] --> B{"Context OK?"}
-  B -->|"OK"| C["Return response"]
-  B -->|"Overflow"| D["Truncate<br/>large tool_result"]
-  D --> E{"Retry OK?"}
-  E -->|"OK"| C
-  E -->|"Overflow"| F["Compact first<br/>50% history"]
-  F --> G{"Retry OK?"}
-  G -->|"OK"| C
-  G -->|"Fail"| H["Throw<br/>Escalate"]
-          </div>
-        </div>
-        <div class="source">来源：vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S03Sessions.java:548-700</div>
-        <aside class="notes">
-          这是基于 S03Sessions.ContextGuard 的源码归纳：直接调用、截断工具输出、摘要压缩、最终抛异常。
-        </aside>
-      </section>
-
-      <section data-part="3">
-        <h2>多平台接入：Agent 不应该知道 Telegram 长什么样</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>OpenClaw S04：统一入站消息 + Channel 接口</span>
-            <span>vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S04Channels.java:130-140,194-210</span>
-          </div>
-          <pre><code class="language-java">record InboundMessage(
-        String text, String senderId, String channel,
-        String accountId, String peerId, boolean isGroup,
-        List&lt;Map&lt;String, Object&gt;&gt; media, Map&lt;String, Object&gt; raw
-) {}
-
-interface Channel {
-    String name();
-    Optional&lt;InboundMessage&gt; receive();
-    boolean send(String to, String text);
-    default void close() {}
-}</code></pre>
-        </div>
-        <aside class="notes">
-          这是 Strategy Pattern：CLI、Telegram、飞书都实现 Channel，Agent Loop 只看 InboundMessage。
-        </aside>
-      </section>
-
-      <section data-part="3">
-        <h2>设计取舍：知识、Prompt、Context，本质上都在管“模型看到什么”</h2>
-        <table>
-          <thead>
-            <tr><th>机制</th><th>白话问题</th><th>工程答案</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Skill</td><td>专业知识太多</td><td>先元数据，后按需加载</td></tr>
-            <tr><td>System Prompt</td><td>输入来源太杂</td><td>分层组装，稳定顺序</td></tr>
-            <tr><td>Context Guard</td><td>历史越来越长</td><td>截断、摘要、恢复</td></tr>
-            <tr><td>Channel</td><td>平台格式不同</td><td>统一入站模型</td></tr>
-          </tbody>
-        </table>
-        <div class="takeaway"><strong>本节 takeaway：</strong>可用 Agent 的核心不是“多写几个工具”，而是持续控制模型的输入质量。</div>
-        <aside class="notes">
-          可以提醒听众：Agent bug 很多时候不是模型“不聪明”，而是上下文管线太脏。
-        </aside>
-      </section>
-
-      <section data-part="4" class="chapter">
-        <div class="eyebrow">Part 4 / Production Agent</div>
-        <h2>生产级 Agent 的底线</h2>
-        <p class="subtitle">可控、可恢复、可投递、可观测。否则只是一个会执行命令的聊天程序。</p>
-        <div class="chapter-line"></div>
-        <aside class="notes">
-          从这里开始讲安全与可靠性。用 AI-Agent 的权限/Hook/Memory 和 OpenClaw 的 Prompt/Memory/WAL/Retry 互相补充。
-        </aside>
-      </section>
-
-      <section data-part="4">
-        <h2>权限系统：deny / mode / allow / ask 管线</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>AI-Agent S07：PermissionManager.check</span>
-            <span>vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S07PermissionSystem.java:307-369</span>
-          </div>
-          <pre><code class="language-java">Map&lt;String, String&gt; check(String toolName, Map&lt;String, Object&gt; toolInput,
-                          BashSecurityValidator bashValidator) {
-    if ("bash".equals(toolName)) {
-        List&lt;String[]&gt; failures = bashValidator.validate(command);
-        if (bashValidator.hasSevereFailure(failures)) {
-            return Map.of("behavior", "deny", "reason", desc);
-        }
-    }
-    // Step 1: deny rules
-    // Step 2: mode checks: plan / auto
-    // Step 3: allow rules
-    return Map.of("behavior", "ask",
-            "reason", "No rule matched for " + toolName + ", asking user");
-}</code></pre>
-        </div>
-        <aside class="notes">
-          真实代码里有完整的 deny 规则、plan/auto 模式、allow 规则和 ask user。这里删节保留管线顺序。
-        </aside>
-      </section>
-
-      <section data-part="4">
-        <h2>Hook 系统：不改 Loop，也能插入生命周期扩展</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>AI-Agent S08：Hook 事件与执行契约</span>
-            <span>vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S08HookSystem.java:441-484,592-598</span>
-          </div>
-          <pre><code class="language-java">static class HookManager {
-    private static final String EVENT_PRE_TOOL_USE  = "PreToolUse";
-    private static final String EVENT_POST_TOOL_USE = "PostToolUse";
-    private static final String EVENT_SESSION_START = "SessionStart";
-
-    static class HookResult {
-        boolean blocked = false;
-        String blockReason = null;
-        List&lt;String&gt; messages = new ArrayList&lt;&gt;();
-        String permissionOverride = null;
-    }
-
-    HookResult runHooks(String event, Map&lt;String, Object&gt; context) { /* ... */ }
-}</code></pre>
-        </div>
-        <aside class="notes">
-          Hook 的价值是扩展点稳定。具体 Hook 可用退出码 1 阻断、退出码 2 注入消息。
-        </aside>
-      </section>
-
-      <section data-part="4">
-        <h2>跨会话记忆：有价值的信息必须活过本轮对话</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>AI-Agent S09：MemoryManager.loadMemoryPrompt</span>
-            <span>vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S09MemorySystem.java:237-270</span>
-          </div>
-          <pre><code class="language-java">String loadMemoryPrompt() {
-    if (memories.isEmpty()) return "";
-    List&lt;String&gt; sections = new ArrayList&lt;&gt;();
-    sections.add("# Memories (persistent across sessions)");
-
-    for (String memType : MEMORY_TYPES) {
-        Map&lt;String, Map&lt;String, String&gt;&gt; typed = new LinkedHashMap&lt;&gt;();
-        // ...
-        sections.add("## [" + memType + "]");
-        sections.add("### " + name + ": " + mem.get("description"));
-        sections.add(content.strip());
-    }
-    return String.join("\n", sections);
-}</code></pre>
-        </div>
-        <aside class="notes">
-          记忆不是完整聊天历史，而是显式保存的、跨会话仍有价值的事实、偏好和项目知识。
-        </aside>
-      </section>
-
-      <section data-part="4">
-        <h2>OpenClaw 八层提示词：身份、灵魂、工具、记忆都各就各位</h2>
-        <div class="layout-2">
-          <div class="mermaid-wrap">
-            <div class="mermaid">
-flowchart TD
-  I["Identity"] --> S["Soul"]
-  S --> T["Tools Guide"]
-  T --> K["Skills"]
-  K --> M["Memory"]
-  M --> B["Bootstrap"]
-  B --> R["Runtime"]
-  R --> C["Channel Hint"]
-            </div>
-          </div>
-          <div class="code-card">
-            <div class="code-title">
-              <span>enterprise PromptAssembler</span>
-              <span>vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/src/main/java/com/openclaw/enterprise/intelligence/PromptAssembler.java:55-114</span>
-            </div>
-            <pre><code class="language-java">public String buildSystemPrompt(String agentId, PromptContext context) {
+          <pre><code class="language-java">public String buildSystemPrompt(String agentId, PromptContext context) {
     Map&lt;String, String&gt; files = bootstrapLoader.loadAll(LoadMode.FULL);
     StringJoiner prompt = new StringJoiner("\n\n");
     appendLayer(prompt, files.get("IDENTITY.md"), "## Identity");
@@ -1090,643 +1390,67 @@ flowchart TD
     // skills, memory, bootstrap, runtime, channel
     return prompt.toString();
 }</code></pre>
-          </div>
         </div>
         <aside class="notes">
-          图是基于 PromptAssembler 源码和 OpenClaw S06 文档归纳。代码片段删节了每层细节。
-        </aside>
-      </section>
-
-      <section data-part="4">
-        <h2>混合记忆检索：关键词和伪向量各管一半</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>OpenClaw S06：hybridSearch 管线</span>
-            <span>vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S06Intelligence.java:1020-1031</span>
-          </div>
-          <pre><code class="language-java">// 1. 双通道搜索
-List&lt;Map&lt;String, Object&gt;&gt; keywordResults = keywordSearch(query, chunks, 10);
-List&lt;Map&lt;String, Object&gt;&gt; vectorResults = vectorSearch(query, chunks, 10);
-
-// 2. 加权合并 (70% 向量 + 30% 关键词)
-List&lt;Map&lt;String, Object&gt;&gt; merged =
-        mergeHybridResults(vectorResults, keywordResults, 0.7, 0.3);
-
-// 3. 时间衰减
-List&lt;Map&lt;String, Object&gt;&gt; decayed = temporalDecay(merged, 0.01);
-
-// 4. MMR 重排
-List&lt;Map&lt;String, Object&gt;&gt; reranked = mmrRerank(decayed, 0.7);</code></pre>
-        </div>
-        <aside class="notes">
-          S06 文档说明：TF-IDF + Hash 随机投影向量 + 时间衰减 + MMR。这里是纯 Java 教学实现。
-        </aside>
-      </section>
-
-      <section data-part="4">
-        <h2>三层重试洋葱：认证、上下文、工具循环分层处理</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart TD
-  A["Layer 1<br/>Auth Profile<br/>Rotation"] --> B["Layer 2<br/>Overflow<br/>Recovery"]
-  B --> C["Layer 3<br/>Tool-Use<br/>Loop"]
-  C --> D{"Success?"}
-  D -->|"yes"| E["markSuccess<br/>return"]
-  D -->|"overflow"| F["truncate tool_result<br/>compact history"]
-  D -->|"auth/rate/timeout"| G["markFailure<br/>cooldown"]
-  F --> B
-  G --> A
-          </div>
-        </div>
-        <div class="source">来源：S09Resilience.java:602-720；enterprise ResilienceRunner.java:64-122</div>
-        <aside class="notes">
-          这是基于 light 和 enterprise 两版 ResilienceRunner 的归纳。重点是失败分类后走不同恢复路径。
-        </aside>
-      </section>
-
-      <section data-part="4">
-        <h2>消息投递安全：先落盘，再投递</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>OpenClaw S08：WAL 原子写入</span>
-            <span>vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S08Delivery.java:175-195,240-255</span>
-          </div>
-          <pre><code class="language-java">static void writeAtomically(Path target, String content) throws IOException {
-    Path tmp = target.resolveSibling(".tmp." + ProcessHandle.current().pid()
-            + "." + target.getFileName().toString());
-    try {
-        Files.writeString(tmp, content, StandardOpenOption.CREATE,
-                StandardOpenOption.TRUNCATE_EXISTING);
-        try (var fos = Files.newOutputStream(tmp, StandardOpenOption.SYNC)) {
-            fos.flush();
-        }
-        Files.move(tmp, target, StandardCopyOption.ATOMIC_MOVE,
-                StandardCopyOption.REPLACE_EXISTING);
-    } finally {
-        try { Files.deleteIfExists(tmp); } catch (IOException e) { /* ignore */ }
-    }
-}</code></pre>
-        </div>
-        <div class="takeaway"><strong>本节 takeaway：</strong>生产级 Agent 的关键能力是“动作可治理，失败可恢复，消息不凭运气送达”。</div>
-        <aside class="notes">
-          WAL 的语义是 at-least-once：成功后 ack 删除文件，失败则保留并重试，耗尽后进 failed。
-        </aside>
-      </section>
-
-      <section data-part="5" class="chapter">
-        <div class="eyebrow">Part 5 / Multi-Agent</div>
-        <h2>多 Agent 不是“多开几个模型”</h2>
-        <p class="subtitle">真正的问题是通信协议、生命周期、任务认领、工作目录隔离和外部工具边界。</p>
-        <div class="chapter-line"></div>
-        <aside class="notes">
-          这一部分主要基于 AI-Agent S15-S19 和 OpenClaw S05 Gateway。
-        </aside>
-      </section>
-
-      <section data-part="5">
-        <h2>JSONL 邮箱：最小可靠通信协议</h2>
-        <div class="layout-2">
-          <div class="code-card">
-            <div class="code-title">
-              <span>AI-Agent S15：MessageBus</span>
-              <span>vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S15AgentTeams.java:239-266</span>
-            </div>
-            <pre><code class="language-java">String send(String sender, String to, String content, String msgType,
-            Map&lt;String, Object&gt; extra) {
-    var msg = new LinkedHashMap&lt;String, Object&gt;();
-    msg.put("type", msgType);
-    msg.put("from", sender);
-    msg.put("content", content);
-    msg.put("timestamp", System.currentTimeMillis() / 1000.0);
-    try (var writer = new FileWriter(INBOX_DIR.resolve(to + ".jsonl").toFile(), true)) {
-        writer.write(MAPPER.writeValueAsString(msg) + "\n");
-    }
-    return "Sent " + msgType + " to " + to;
-}</code></pre>
-          </div>
-          <div class="mermaid-wrap">
-            <div class="mermaid">
-flowchart LR
-  Lead["lead"] -->|"append JSONL"| InboxA[".team/inbox/alice.jsonl"]
-  Alice["alice"] -->|"append JSONL"| InboxL[".team/inbox/lead.jsonl"]
-  InboxL -->|"read + drain"| Lead
-  InboxA -->|"read + drain"| Alice
-            </div>
-          </div>
-        </div>
-        <aside class="notes">
-          这是文件系统版 mailbox。优点是简单、可调试、进程重启后仍有未读消息。
-        </aside>
-      </section>
-
-      <section data-part="5">
-        <h2>握手协议：协作必须有状态机</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-stateDiagram-v2
-  [*] --> pending
-  pending --> approved: shutdown_response approve=true
-  pending --> rejected: shutdown_response approve=false
-  pending --> expired: timeout
-  approved --> closed
-  rejected --> working
-  expired --> working
-          </div>
-        </div>
-        <div class="source">来源：S15 工具枚举包含 shutdown_request / shutdown_response / plan_approval；S16TeamProtocols.java 协议扩展</div>
-        <aside class="notes">
-          这是基于 S15/S16 消息类型与 RequestStore 的归纳。多 Agent 协作不能只靠自然语言“请你做一下”。
-        </aside>
-      </section>
-
-      <section data-part="5">
-        <h2>自治 Agent：idle 不是结束，而是等待下一次触发</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>AI-Agent S17：idle 轮询 + 自动认领</span>
-            <span>vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S17AutonomousAgents.java:409-447</span>
-          </div>
-          <pre><code class="language-java">// ---- IDLE PHASE: 轮询收件箱和未认领任务 ----
-setMemberStatus(name, "idle");
-for (int p = 0; p &lt; polls; p++) {
-    Thread.sleep(POLL_INTERVAL_SECONDS * 1000L);
-    var inbox = bus.readInbox(name);
-    if (!inbox.isEmpty()) { resume = true; break; }
-
-    var unclaimed = scanUnclaimedTasks(role);
-    if (!unclaimed.isEmpty()) {
-        var task = unclaimed.get(0);
-        String claimResult = claimTask(taskId, name, role, "auto");
-        paramsBuilder.addUserMessage("&lt;auto-claimed&gt;Task #" + task.get("id") + "&lt;/auto-claimed&gt;");
-        resume = true; break;
-    }
-}</code></pre>
-        </div>
-        <aside class="notes">
-          这段代码体现 idle -> poll -> claim -> work 生命周期。role 过滤让任务能被合适的 teammate 自动认领。
-        </aside>
-      </section>
-
-      <section data-part="5">
-        <h2>Worktree 隔离：并行工作先别踩同一个目录</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>AI-Agent S18：createWorktree</span>
-            <span>vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S18WorktreeIsolation.java:349-363</span>
-          </div>
-          <pre><code class="language-java">private static String createWorktree(String name, Integer taskId, String baseRef) {
-    if (!NAME_PATTERN.matcher(name).matches()) return "Error: Invalid worktree name.";
-    Path path = worktreeDir.resolve(name);
-    String branch = "wt/" + name;
-    String ref = baseRef != null ? baseRef : "HEAD";
-    emitEvent("worktree.create.before", taskId, name, null);
-    runGit("worktree", "add", "-b", branch, path.toString(), ref);
-    var entry = new LinkedHashMap&lt;String, Object&gt;();
-    entry.put("name", name);
-    entry.put("path", path.toString());
-    entry.put("branch", branch);
-    emitEvent("worktree.create.after", taskId, name, null);
-    return MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(entry);
-}</code></pre>
-        </div>
-        <aside class="notes">
-          Worktree 是目录级沙箱：不同 Agent 可以在不同分支和目录里工作，减少互相覆盖。
-        </aside>
-      </section>
-
-      <section data-part="5">
-        <h2>MCP 插件：把外部能力接进同一个工具控制面</h2>
-        <div class="layout-2">
-          <div class="code-card">
-            <div class="code-title">
-              <span>AI-Agent S19：JSON-RPC over stdio</span>
-              <span>vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S19McpPlugin.java:563-585</span>
-            </div>
-            <pre><code class="language-java">private void send(String method, Map&lt;String, Object&gt; params) {
-    this.requestId++;
-    Map&lt;String, Object&gt; envelope = new LinkedHashMap&lt;&gt;();
-    envelope.put("jsonrpc", "2.0");
-    envelope.put("id", this.requestId);
-    envelope.put("method", method);
-    envelope.put("params", params);
-
-    String json = JSON_MAPPER.writeValueAsString(envelope) + "\n";
-    this.stdinWriter.write(json);
-    this.stdinWriter.flush();
-}</code></pre>
-          </div>
-          <div class="mermaid-wrap">
-            <div class="mermaid">
-flowchart TD
-  Agent["Agent Tool<br/>Router"] --> Gate["Capability<br/>Permission Gate"]
-  Gate --> MCP["MCP Tool<br/>Router"]
-  MCP --> Stdio["stdio<br/>JSON-RPC 2.0"]
-  Stdio --> Server["External MCP<br/>Server"]
-            </div>
-          </div>
-        </div>
-        <aside class="notes">
-          MCP 工具仍然经过权限门。外部工具不应该绕过同一个控制面。
-        </aside>
-      </section>
-
-      <section data-part="5">
-        <h2>Gateway Routing：消息先找 Agent，再进 Loop</h2>
-        <div class="layout-2">
-          <div class="code-card">
-            <div class="code-title">
-              <span>enterprise BindingTable.resolve</span>
-              <span>vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/src/main/java/com/openclaw/enterprise/gateway/BindingTable.java:45-60,122-131</span>
-            </div>
-            <pre><code class="language-java">public Optional&lt;ResolvedBinding&gt; resolve(String channel, String accountId,
-                                          String guildId, String peerId) {
-    List&lt;Binding&gt; sorted = sortedCache;
-    if (sorted == null) {
-        sorted = bindings.stream()
-            .sorted(Comparator.comparingInt(Binding::tier)
-            .thenComparing(Comparator.comparingInt(Binding::priority).reversed()))
-            .toList();
-        sortedCache = sorted;
-    }
-    return sorted.stream()
-        .filter(b -&gt; matches(b, channel, accountId, guildId, peerId))
-        .findFirst().map(b -&gt; new ResolvedBinding(b.agentId(), b));
-}</code></pre>
-          </div>
-          <div class="mermaid-wrap">
-            <div class="mermaid">
-flowchart TD
-  Msg["InboundMessage"] --> Peer["Tier 1 peer"]
-  Peer --> Guild["Tier 2 guild"]
-  Guild --> Account["Tier 3 account"]
-  Account --> Channel["Tier 4 channel"]
-  Channel --> Default["Tier 5 default"]
-  Default --> Agent["AgentLoop"]
-            </div>
-          </div>
-        </div>
-        <div class="takeaway"><strong>本节 takeaway：</strong>多 Agent 系统的难点在协议、路由和隔离；模型数量只是表面现象。</div>
-        <aside class="notes">
-          这是 Gateway 侧的多 Agent 管理。五级绑定表解决“这条消息应该交给哪个 agent”。
-        </aside>
-      </section>
-
-      <section data-part="6" class="chapter">
-        <div class="eyebrow">Part 6 / Teaching vs Production</div>
-        <h2>教学版和生产版，解决的是不同风险</h2>
-        <p class="subtitle">教学版降低理解成本；生产版降低运行风险。核心模式保持，组织方式改变。</p>
-        <div class="chapter-line"></div>
-        <aside class="notes">
-          这一节收束工程形态：light-claw-4j 与 enterprise-claw-4j 的对比。
-        </aside>
-      </section>
-
-      <section data-part="6">
-        <h2>light-claw-4j vs enterprise-claw-4j：同一概念，两种形态</h2>
-        <table>
-          <thead>
-            <tr><th>维度</th><th>light-claw-4j</th><th>enterprise-claw-4j</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>组织</td><td>10 个 Session 单文件</td><td>14 个包，87 个 Java 主类</td></tr>
-            <tr><td>启动</td><td>main() + REPL</td><td>Spring Boot 容器</td></tr>
-            <tr><td>配置</td><td>.env</td><td>application.yml + properties</td></tr>
-            <tr><td>部署</td><td>mvn exec:java</td><td>Docker / K8s / Actuator</td></tr>
-          </tbody>
-        </table>
-        <div class="source">来源：OpenClaw README；enterprise docs/overview.md；本地源码统计</div>
-        <aside class="notes">
-          关键是不要把教学版当成生产版，也不要用生产版一上来吓退学习者。
-        </aside>
-      </section>
-
-      <section data-part="6">
-        <h2>生产版：把“一个文件里的概念”拆成可运维服务</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>enterprise ToolRegistry</span>
-            <span>vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/src/main/java/com/openclaw/enterprise/tool/ToolRegistry.java:42-69</span>
-          </div>
-          <pre><code class="language-java">public ToolRegistry(List&lt;ToolHandler&gt; handlerList) {
-    handlerList.forEach(h -&gt; {
-        handlers.put(h.getName(), h);
-        log.info("Registered tool: {}", h.getName());
-    });
-}
-
-public String dispatch(String name, Map&lt;String, Object&gt; input) {
-    ToolHandler handler = handlers.get(name);
-    if (handler == null) {
-        throw new ToolExecutionException(name, "Unknown tool: " + name);
-    }
-    return handler.execute(input);
-}</code></pre>
-        </div>
-        <div class="takeaway">教学版的 Map 分发，到生产版变成 Spring 自动收集 ToolHandler。</div>
-        <aside class="notes">
-          这是“同一个模式，生产级组织方式不同”的例子。分发表还在，但生命周期和注册方式交给容器。
-        </aside>
-      </section>
-
-      <section data-part="6">
-        <h2>从教学到生产：改变组织方式，不改变核心模式</h2>
-        <table>
-          <thead>
-            <tr><th>核心模式</th><th>教学版表现</th><th>生产版表现</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Agent Loop</td><td>while(true)</td><td>AgentLoop Service</td></tr>
-            <tr><td>Tool Dispatch</td><td>LinkedHashMap</td><td>ToolRegistry + DI</td></tr>
-            <tr><td>Session</td><td>JSONL 文件</td><td>SessionStore + metadata</td></tr>
-            <tr><td>Reliability</td><td>局部类演示</td><td>ResilienceRunner / DeliveryQueue / CommandQueue</td></tr>
-          </tbody>
-        </table>
-        <div class="takeaway"><strong>本节 takeaway：</strong>教学版追求概念高保真，生产版追求边界、配置、恢复和部署高保真。</div>
-        <aside class="notes">
-          这页是工程判断：何时从脚本式教学代码迁移到服务化模块。
-        </aside>
-      </section>
-
-      <section data-part="7" class="chapter">
-        <div class="eyebrow">Part 7 / Summary</div>
-        <h2>29 个 Session，其实在讲一张图</h2>
-        <p class="subtitle">Loop 是核心，Tools 是接口，Memory 是上下文，Gateway 是平台化边界。</p>
-        <div class="chapter-line"></div>
-        <aside class="notes">
-          最后三页做总览、模式清单和资源。
-        </aside>
-      </section>
-
-      <section data-part="7">
-        <h2>全景回顾：知识图谱不是线性的</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-flowchart TD
-  Loop["Agent Loop"] --> Tools["Tool Dispatch"]
-  Tools --> Control["Permission<br/>Hook"]
-  Loop --> Context["Messages<br/>Sessions"]
-  Context --> Compact["Compact<br/>ContextGuard"]
-  Context --> Memory["Memory<br/>Retrieval"]
-  Tools --> MCP["MCP<br/>Plugins"]
-  Loop --> Team["Subagent<br/>Teams"]
-  Team --> Worktree["Worktree<br/>Isolation"]
-  Gateway["Channels<br/>Routing"] --> Loop
-  Gateway --> Delivery["WAL<br/>Delivery"]
-  Gateway --> Concurrency["Lane<br/>Queue"]
-          </div>
-        </div>
-        <aside class="notes">
-          这是基于两个项目所有 Session 的归纳图。可以强调学习顺序是线性，系统结构是网状。
-        </aside>
-      </section>
-
-      <section data-part="7">
-        <h2>核心设计模式 Top 12</h2>
-        <div class="pill-row">
-          <span class="pill">Tool Dispatch Map</span>
-          <span class="pill">Schema + Handler</span>
-          <span class="pill">stop_reason FSM</span>
-          <span class="pill">Self-Tracking with Nag</span>
-          <span class="pill">Process = Context Isolation</span>
-          <span class="pill">Two-Layer Knowledge Injection</span>
-          <span class="pill">Tiered Compression</span>
-          <span class="pill">JSONL Append-Only</span>
-          <span class="pill">WAL Delivery</span>
-          <span class="pill">Retry Onion</span>
-          <span class="pill">Lane Queue</span>
-          <span class="pill">Control / Execution Plane Split</span>
-        </div>
-        <aside class="notes">
-          这些模式都能从真实源码里定位到实现。不要把它们当 buzzword，而是可复用的工程构件。
-        </aside>
-      </section>
-
-      <section data-part="7">
-        <h2>两个项目的互补关系：Runtime 与 Gateway</h2>
-        <div class="layout-2">
-          <div class="panel">
-            <h3>AI-Agent-ZeroToOne</h3>
-            <p>回答“一个 Agent 怎么思考、调用工具、管理上下文、组队和接插件”。</p>
-          </div>
-          <div class="panel">
-            <h3>OpenClaw-ZeroToOne</h3>
-            <p>回答“很多渠道、很多用户、很多 Agent 如何路由、投递、恢复和部署”。</p>
-          </div>
-        </div>
-        <div class="takeaway">相同问题、不同取舍：教学单文件实现、Gateway 多平台抽象、生产级 Spring Boot 组织方式分别服务不同阶段。</div>
-        <aside class="notes">
-          回扣 prompt 要求的“相同问题、不同取舍”。这页是整场的核心总结。
-        </aside>
-      </section>
-
-      <section data-part="7">
-        <h2>Q&amp;A：接下来可以从三条路线深入</h2>
-        <div class="layout-3">
-          <div class="panel"><h3>写一个 Agent</h3><p>从 S01/S02 开始，先完整跑通 Loop + Tools。</p></div>
-          <div class="panel"><h3>做成平台</h3><p>读 OpenClaw S04-S10，重点看渠道、路由、投递、并发。</p></div>
-          <div class="panel"><h3>工程化落地</h3><p>看 enterprise-claw-4j 的 Spring 包结构和部署边界。</p></div>
-        </div>
-        <div class="source">资源：vendors/AI-Agent-ZeroToOne/README.md；vendors/OpenClaw-ZeroToOne/README.md；slides appendix</div>
-        <div class="takeaway"><strong>本节 takeaway：</strong>先掌握 Loop，再把控制面、上下文面、网关面一层层补上。</div>
-        <aside class="notes">
-          预留 5-8 分钟 Q&amp;A。如果时间不足，Appendix 可跳过。
-        </aside>
-      </section>
-
-      <section data-part="7" data-visibility="uncounted">
-        <div class="appendix-badge">Appendix A1</div>
-        <h2>AI-Agent S01/S02 完整代码路径与运行方式</h2>
-        <div class="layout-2">
-          <div class="panel">
-            <h3>源码路径</h3>
-            <p>vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S01AgentLoop.java</p>
-            <p>vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S02ToolUse.java</p>
-          </div>
-          <div class="code-card">
-            <div class="code-title"><span>运行方式</span><span>vendors/AI-Agent-ZeroToOne/README.md</span></div>
-            <pre><code class="language-bash">cd vendors/AI-Agent-ZeroToOne/mini-agent-4j
-cp .env.example .env
-mvn compile
-mvn exec:java -Dexec.mainClass="com.example.agent.sessions.S01AgentLoop"
-mvn exec:java -Dexec.mainClass="com.example.agent.sessions.S02ToolUse"</code></pre>
-          </div>
-        </div>
-        <aside class="notes">
-          Appendix 不计入主讲页码，可在 Q&amp;A 中跳转。
-        </aside>
-      </section>
-
-      <section data-part="7" data-visibility="uncounted">
-        <div class="appendix-badge">Appendix A2</div>
-        <h2>OpenClaw light S01-S10 源码地图</h2>
-        <table>
-          <thead><tr><th>Session</th><th>源码</th><th>主题</th></tr></thead>
-          <tbody>
-            <tr><td>S01-S02</td><td>light-claw-4j/src/main/java/com/claw0/sessions/S01/S02</td><td>Loop + Tool Use</td></tr>
-            <tr><td>S03-S05</td><td>S03Sessions / S04Channels / S05GatewayRouting</td><td>Session、Channel、Routing</td></tr>
-            <tr><td>S06-S08</td><td>S06Intelligence / S07HeartbeatCron / S08Delivery</td><td>Prompt、Memory、主动行为、投递</td></tr>
-            <tr><td>S09-S10</td><td>S09Resilience / S10Concurrency</td><td>重试洋葱、命名车道队列</td></tr>
-          </tbody>
-        </table>
-        <aside class="notes">
-          路径来自仓库实际文件结构。
-        </aside>
-      </section>
-
-      <section data-part="7" data-visibility="uncounted">
-        <div class="appendix-badge">Appendix A3</div>
-        <h2>enterprise-claw-4j 包结构：14 个包，87 个 Java 主类</h2>
-        <div class="pill-row">
-          <span class="pill">agent</span><span class="pill">auth</span><span class="pill">channel</span>
-          <span class="pill">common</span><span class="pill">concurrency</span><span class="pill">config</span>
-          <span class="pill">delivery</span><span class="pill">gateway</span><span class="pill">health</span>
-          <span class="pill">intelligence</span><span class="pill">resilience</span><span class="pill">scheduler</span>
-          <span class="pill">session</span><span class="pill">tool</span>
-        </div>
-        <div class="source">统计命令：find enterprise-claw-4j/src/main/java -name '*.java' | wc -l</div>
-        <aside class="notes">
-          源码统计结果：87 个 Java 文件；com.openclaw.enterprise 下 14 个一级包。
+          用来证明主讲页的八层提示词不是虚构的。
         </aside>
       </section>
 
       <section data-part="7" data-visibility="uncounted">
         <div class="appendix-badge">Appendix A4</div>
-        <h2>Context Guard 代码细节：截断大工具输出</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>OpenClaw S03：truncateToolResult</span>
-            <span>vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S03Sessions.java:592-604</span>
-          </div>
-          <pre><code class="language-java">String truncateToolResult(String result, double maxFraction) {
-    int maxChars = (int) (maxTokens * 4 * maxFraction);
-    if (result.length() &lt;= maxChars) return result;
-    int cut = result.lastIndexOf('\n', maxChars);
-    if (cut &lt;= 0) cut = maxChars;
-    String head = result.substring(0, cut);
-    return head + "\n\n[... truncated (" + result.length()
-            + " chars total, showing first " + head.length() + ") ...]";
-}</code></pre>
-        </div>
+        <h2>AI-Agent 源码地图：按架构问题读</h2>
+        <table>
+          <thead>
+            <tr><th>架构问题</th><th>建议先看</th><th>关注点</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Loop 与工具</td><td>S01AgentLoop / S02ToolUse</td><td>runOneTurn、tool_use、tool_result</td></tr>
+            <tr><td>上下文管理</td><td>S03-S06</td><td>Todo、Subagent、Skill、Compact</td></tr>
+            <tr><td>生产护栏</td><td>S07-S11</td><td>Permission、Hook、Memory、System Prompt、Recovery</td></tr>
+            <tr><td>多 Agent</td><td>S15-S19</td><td>Teams、Protocols、Autonomous、Worktree、MCP</td></tr>
+          </tbody>
+        </table>
         <aside class="notes">
-          工具输出常常是上下文爆炸的最大来源，先截断大块输出是低成本恢复策略。
+          给团队后续阅读源码使用。
         </aside>
       </section>
 
       <section data-part="7" data-visibility="uncounted">
         <div class="appendix-badge">Appendix A5</div>
-        <h2>Delivery WAL 失败场景推演</h2>
-        <div class="mermaid-wrap">
-          <div class="mermaid">
-sequenceDiagram
-  participant Agent
-  participant Queue
-  participant Disk
-  participant Channel
-  Agent->>Queue: enqueue(channel,to,text)
-  Queue->>Disk: tmp write + fsync + rename
-  Queue->>Channel: deliver
-  alt success
-    Queue->>Disk: ack delete pending file
-  else failure
-    Queue->>Disk: update retry_count / next_retry_at
-  end
-  Note over Queue,Disk: restart 后扫描 pending/ 恢复未完成投递
-          </div>
-        </div>
+        <h2>OpenClaw 源码地图：从 CLI 到 Gateway</h2>
+        <table>
+          <thead>
+            <tr><th>阶段</th><th>Session</th><th>核心问题</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Runtime</td><td>S01-S03</td><td>Loop、Tool Use、Session、ContextGuard</td></tr>
+            <tr><td>Gateway</td><td>S04-S05</td><td>Channels、Gateway、Routing、WebSocket</td></tr>
+            <tr><td>Intelligence</td><td>S06</td><td>八层提示词、混合记忆检索</td></tr>
+            <tr><td>Production</td><td>S07-S10</td><td>Heartbeat、WAL、Resilience、Lane Queue</td></tr>
+          </tbody>
+        </table>
         <aside class="notes">
-          基于 S08Delivery.java 与 enterprise DeliveryQueue.java 的 WAL 设计归纳。
+          说明 OpenClaw 的课程路线。
         </aside>
       </section>
 
       <section data-part="7" data-visibility="uncounted">
         <div class="appendix-badge">Appendix A6</div>
-        <h2>PromptAssembler 8 层实现代码细节</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>enterprise PromptAssembler：Layer 5 Memory</span>
-            <span>vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/src/main/java/com/openclaw/enterprise/intelligence/PromptAssembler.java:74-94</span>
-          </div>
-          <pre><code class="language-java">StringBuilder memoryBlock = new StringBuilder();
-if (context.userMessage() != null &amp;&amp; !context.userMessage().isBlank()) {
-    var memories = memoryStore.hybridSearch(context.userMessage(), 3);
-    if (!memories.isEmpty()) {
-        memoryBlock.append("## Relevant Memories\n\n");
-        for (var mem : memories) {
-            memoryBlock.append("- ").append(mem.content()).append("\n");
-        }
-    }
-}
-bootstrapLoader.getFile("MEMORY.md").ifPresent(mem -&gt; {
-    memoryBlock.append("\n### Permanent Memory\n\n").append(mem);
-});</code></pre>
-        </div>
+        <h2>几个容易混淆的词</h2>
+        <table>
+          <thead>
+            <tr><th>词</th><th>在这套架构里的含义</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Harness</td><td>围绕模型的运行环境：消息、工具、权限、恢复、持久化。</td></tr>
+            <tr><td>Tool</td><td>模型能请求、系统能执行的外部能力，不等于普通函数。</td></tr>
+            <tr><td>Context</td><td>模型这一轮能看到的信息集合，包括历史、工具结果、系统提示词。</td></tr>
+            <tr><td>Memory</td><td>跨会话保存并按需召回的信息，不应该全量塞进 context。</td></tr>
+            <tr><td>Gateway</td><td>把多渠道消息路由到正确 Agent，并负责投递、恢复和管理。</td></tr>
+          </tbody>
+        </table>
         <aside class="notes">
-          这里体现自动召回相关记忆和常青 MEMORY.md 的合并。
-        </aside>
-      </section>
-
-      <section data-part="7" data-visibility="uncounted">
-        <div class="appendix-badge">Appendix A7</div>
-        <h2>CommandQueue / LaneQueue 并发细节</h2>
-        <div class="code-card">
-          <div class="code-title">
-            <span>enterprise LaneQueue：虚拟线程 worker</span>
-            <span>vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/src/main/java/com/openclaw/enterprise/concurrency/LaneQueue.java:149-175</span>
-          </div>
-          <pre><code class="language-java">private void pump() {
-    while (activeCount &lt; maxConcurrency &amp;&amp; !deque.isEmpty()) {
-        QueuedItem item = deque.pollFirst();
-        if (item.generation() != generation.get()) {
-            item.future().cancel(false);
-            continue;
-        }
-        activeCount++;
-        int expectedGen = item.generation();
-        Thread.ofVirtual().name("lane-" + name + "-worker").start(() -&gt; {
-            try { item.future().complete(item.task().call()); }
-            catch (Throwable t) { item.future().completeExceptionally(t); }
-            finally { taskDone(expectedGen); }
-        });
-    }
-}</code></pre>
-        </div>
-        <aside class="notes">
-          同一 lane 内 FIFO，不同 lane 之间互不阻塞。generation 用于 reset 后取消旧任务。
-        </aside>
-      </section>
-
-      <section data-part="7" data-visibility="uncounted">
-        <div class="appendix-badge">Appendix A8</div>
-        <h2>MCP stdio JSON-RPC 消息示例</h2>
-        <div class="layout-2">
-          <div class="code-card">
-            <div class="code-title"><span>initialize</span><span>S19McpPlugin.java:420-435</span></div>
-            <pre><code class="language-json">{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "initialize",
-  "params": {
-    "protocolVersion": "2024-11-05",
-    "capabilities": {},
-    "clientInfo": {"name": "teaching-agent", "version": "1.0"}
-  }
-}</code></pre>
-          </div>
-          <div class="code-card">
-            <div class="code-title"><span>tools/call</span><span>S19McpPlugin.java:466-470,683-698</span></div>
-            <pre><code class="language-json">{
-  "jsonrpc": "2.0",
-  "id": 2,
-  "method": "tools/call",
-  "params": {
-    "name": "query",
-    "arguments": {"sql": "select 1"}
-  }
-}</code></pre>
-          </div>
-        </div>
-        <aside class="notes">
-          JSON 示例按 S19McpPlugin.java 的协议注释和 send() 结构整理。
+          术语表页适合 Q&amp;A 时回跳。
         </aside>
       </section>
 
@@ -1739,22 +1463,23 @@ bootstrapLoader.getFile("MEMORY.md").ifPresent(mem -&gt; {
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/highlight/highlight.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/notes/notes.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.3/dist/mermaid.min.js"></script>
-
   <script>
     const partNames = {
-      "1": "开场",
-      "2": "核心原理",
+      "1": "建立直觉",
+      "2": "核心架构",
       "3": "可用智能体",
-      "4": "生产级 Agent",
+      "4": "生产级",
       "5": "多 Agent",
-      "6": "教学 vs 生产",
-      "7": "总结"
+      "6": "总结",
+      "7": "附录"
     };
 
     function annotateSlides() {
       const sections = Array.from(document.querySelectorAll(".reveal .slides > section"));
-      const mainSlides = sections.filter(section => section.dataset.visibility !== "uncounted");
-      sections.forEach(section => {
+      const mainSlides = sections.filter(function(section) {
+        return section.dataset.visibility !== "uncounted";
+      });
+      sections.forEach(function(section) {
         const footer = document.createElement("div");
         footer.className = "slide-footer";
         const part = section.dataset.part || "1";
@@ -1762,7 +1487,7 @@ bootstrapLoader.getFile("MEMORY.md").ifPresent(mem -&gt; {
         const index = mainSlides.indexOf(section) + 1;
         const left = document.createElement("span");
         left.className = "part-label";
-        left.textContent = isAppendix ? "Appendix" : `Part ${part} / 7 · ${partNames[part] || ""}`;
+        left.textContent = isAppendix ? "Appendix" : `Part ${part} / 6 · ${partNames[part] || ""}`;
         const right = document.createElement("span");
         right.textContent = isAppendix ? "Appendix · uncounted" : `${index} / ${mainSlides.length}`;
         footer.append(left, right);
@@ -1778,7 +1503,9 @@ bootstrapLoader.getFile("MEMORY.md").ifPresent(mem -&gt; {
     function updateProgress(event) {
       const section = event.currentSlide || Reveal.getCurrentSlide();
       const all = Array.from(document.querySelectorAll(".reveal .slides > section"));
-      const main = all.filter(s => s.dataset.visibility !== "uncounted");
+      const main = all.filter(function(s) {
+        return s.dataset.visibility !== "uncounted";
+      });
       const idx = main.indexOf(section);
       const progress = document.querySelector(".deck-progress");
       const pct = idx >= 0 ? ((idx + 1) / main.length) * 100 : 100;
@@ -1818,7 +1545,7 @@ bootstrapLoader.getFile("MEMORY.md").ifPresent(mem -&gt; {
       highlight: {
         escapeHTML: false
       }
-    }).then(() => {
+    }).then(function() {
       mermaid.initialize({
         startOnLoad: false,
         securityLevel: "loose",
@@ -1840,9 +1567,13 @@ bootstrapLoader.getFile("MEMORY.md").ifPresent(mem -&gt; {
           rankSpacing: 48,
           padding: 14,
           useMaxWidth: true
+        },
+        sequence: {
+          useMaxWidth: true,
+          mirrorActors: false
         }
       });
-      renderMermaidDiagrams().then(() => {
+      renderMermaidDiagrams().then(function() {
         updateProgress({ currentSlide: Reveal.getCurrentSlide() });
       });
     });
