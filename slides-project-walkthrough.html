@@ -230,19 +230,19 @@ AI Agent 项目拆解版 HTML Slides
     }
 
     .session-card {
-      min-height: 148px;
+      min-height: 112px;
       padding: 16px 16px;
     }
 
     .session-card p {
       margin: 0;
       color: var(--muted);
-      font-size: 0.54em;
+      font-size: 0.5em;
       line-height: 1.43;
     }
 
     .code-ref {
-      margin-top: 14px;
+      margin-top: 12px;
       padding: 14px 16px;
       display: grid;
       grid-template-columns: 1.1fr 1.6fr;
@@ -269,6 +269,129 @@ AI Agent 项目拆解版 HTML Slides
       font-size: 0.48em;
       line-height: 1.35;
       white-space: normal;
+    }
+
+    .diagram-mini {
+      margin-top: 12px;
+      padding: 12px 14px 13px;
+      border: 1px solid rgba(103, 86, 63, 0.24);
+      border-radius: 8px;
+      background:
+        linear-gradient(180deg, rgba(255, 252, 239, 0.8), rgba(248, 237, 204, 0.72));
+      box-shadow: 0 12px 28px rgba(82, 60, 35, 0.07);
+    }
+
+    .diagram-mini-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 9px;
+    }
+
+    .diagram-mini-title {
+      font-family: var(--font-heading);
+      color: var(--accent);
+      font-size: 0.46em;
+      font-weight: 700;
+    }
+
+    .diagram-mini-caption {
+      color: var(--muted);
+      font-size: 0.42em;
+      line-height: 1.3;
+      text-align: right;
+    }
+
+    .mini-flow {
+      display: flex;
+      align-items: stretch;
+      gap: 7px;
+    }
+
+    .mini-node,
+    .mini-lane,
+    .mini-stack-item {
+      border: 1px solid var(--line);
+      background: rgba(255, 248, 231, 0.78);
+      border-radius: 7px;
+      color: var(--text);
+    }
+
+    .mini-node {
+      flex: 1 1 0;
+      min-width: 0;
+      min-height: 43px;
+      padding: 8px 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-family: var(--font-heading);
+      font-size: 0.4em;
+      font-weight: 650;
+      line-height: 1.22;
+    }
+
+    .mini-node.primary,
+    .mini-lane.primary,
+    .mini-stack-item.primary {
+      border-color: color-mix(in srgb, var(--accent), transparent 22%);
+      background: color-mix(in srgb, var(--accent), #fff8e7 88%);
+    }
+
+    .mini-arrow {
+      align-self: center;
+      color: var(--accent);
+      font-family: var(--font-heading);
+      font-size: 0.4em;
+      font-weight: 700;
+      flex: 0 0 auto;
+    }
+
+    .mini-lanes {
+      display: grid;
+      grid-template-columns: repeat(var(--lane-count), minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .mini-lane {
+      padding: 8px 9px;
+      min-height: 58px;
+    }
+
+    .mini-lane-title {
+      font-family: var(--font-heading);
+      color: var(--accent);
+      font-size: 0.38em;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .mini-lane-step {
+      color: var(--muted);
+      font-size: 0.38em;
+      line-height: 1.24;
+      margin-top: 3px;
+    }
+
+    .mini-stack {
+      display: grid;
+      grid-template-columns: repeat(var(--stack-count), minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .mini-stack-item {
+      padding: 8px 9px;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-family: var(--font-heading);
+      font-size: 0.39em;
+      font-weight: 650;
+      line-height: 1.22;
     }
 
     .diagram-box {
@@ -420,8 +543,20 @@ AI Agent 项目拆解版 HTML Slides
       .diagram-row,
       .diagram-row.three,
       .diagram-row.six,
+      .mini-flow,
+      .mini-lanes,
+      .mini-stack,
       .stack-item {
         grid-template-columns: 1fr;
+      }
+      .mini-flow {
+        flex-direction: column;
+      }
+      .mini-arrow {
+        transform: rotate(90deg);
+      }
+      .diagram-mini-caption {
+        text-align: left;
       }
       .arrow {
         transform: rotate(90deg);
@@ -837,6 +972,285 @@ AI Agent 项目拆解版 HTML Slides
       }
     ];
 
+    const aiDiagrams = {
+      "S01": {
+        title: "讲义图转译：Agent Loop 最小闭环",
+        type: "flow",
+        caption: "来自 s01 最小心智模型：消息、模型、工具结果形成下一轮输入。",
+        steps: ["user message", "LLM", "stop_reason", "tool_result", "next turn"]
+      },
+      "S02": {
+        title: "讲义图转译：工具分发表",
+        type: "flow",
+        caption: "来自 s02 ASCII 图：循环不变，只是在中间挂一张 dispatch map。",
+        steps: ["User prompt", "LLM tool_use", "Tool Dispatch", "Handler", "tool_result"]
+      },
+      "S03": {
+        title: "讲义图转译：计划状态外置",
+        type: "flow",
+        caption: "来自 s03 最小心智模型：长任务先变成可检查计划，再逐步推进。",
+        steps: ["大任务", "TodoWrite", "in_progress", "completed", "偏航提醒"]
+      },
+      "S04": {
+        title: "讲义图转译：父子 Agent 交接",
+        type: "flow",
+        caption: "来自 s04 最小心智模型：子 Agent 隔离探索，父 Agent 只接收摘要。",
+        steps: ["Parent", "外包局部任务", "Subagent context", "Summary", "Parent continues"]
+      },
+      "S05": {
+        title: "讲义图转译：Skill 两层加载",
+        type: "lanes",
+        caption: "来自 s05 讲义图：先给目录，真正需要时再加载正文。",
+        lanes: [
+          { label: "轻量目录", steps: ["skill name", "description", "让模型知道有哪些"] },
+          { label: "按需正文", steps: ["load_skill()", "tool_result", "正文注入上下文"] }
+        ]
+      },
+      "S06": {
+        title: "讲义图转译：Context 三层压缩",
+        type: "stack",
+        caption: "来自 s06 最小心智模型：先处理大输出，再处理旧结果，最后摘要历史。",
+        items: ["大结果落盘", "旧结果占位", "整体历史摘要"]
+      },
+      "S07": {
+        title: "讲义图转译：权限检查流水线",
+        type: "flow",
+        caption: "来自 s07 最小心智模型：模型提出意图，系统逐级判断能否执行。",
+        steps: ["tool_call", "deny rules", "mode check", "allow rules", "ask / execute"]
+      },
+      "S08": {
+        title: "讲义图转译：Hook 最小执行流程",
+        type: "flow",
+        caption: "来自 s08 最小执行流程：PreToolUse 和 PostToolUse 夹住真实工具执行。",
+        steps: ["tool_use", "PreToolUse", "执行工具", "PostToolUse", "继续 / 阻断 / 补充"]
+      },
+      "S09": {
+        title: "讲义图转译：Memory 生命周期",
+        type: "flow",
+        caption: "来自 s09 最小心智模型：跨会话事实通过文件持久化，再被下一次会话加载。",
+        steps: ["conversation", "save_memory", ".memory files", "loadAll()", "下次注入"]
+      },
+      "S10": {
+        title: "讲义图转译：System Prompt 装配面",
+        type: "stack",
+        caption: "来自 s10 最小心智模型：稳定规则和动态上下文分层装配。",
+        items: ["core", "tools", "skills", "memory", "CLAUDE.md", "dynamic", "final prompt"]
+      },
+      "S11": {
+        title: "讲义图转译：恢复路径分流",
+        type: "lanes",
+        caption: "来自 s11 最小心智模型：截断、溢出、传输错误不是同一种重试。",
+        lanes: [
+          { label: "max_tokens", steps: ["注入续写提示", "再试一次"] },
+          { label: "prompt too long", steps: ["压缩旧上下文", "再试一次"] },
+          { label: "transient error", steps: ["退避等待", "再试一次"] }
+        ]
+      },
+      "S12": {
+        title: "讲义图转译：从 Todo 到任务图",
+        type: "flow",
+        caption: "来自 s12 任务图说明：节点和依赖决定哪些任务 ready。",
+        steps: ["任务节点", "依赖连线", "ready 判断", "认领执行", "完成解锁"]
+      },
+      "S13": {
+        title: "讲义图转译：后台任务双线运行",
+        type: "lanes",
+        caption: "来自 s13 最小心智模型：主循环不中断，后台线程完成后把通知带回来。",
+        lanes: [
+          { label: "主循环", steps: ["background_run", "返回 task_id", "下一轮 drain"] },
+          { label: "后台线", steps: ["Virtual Thread", "执行命令", "写通知队列"] }
+        ]
+      },
+      "S14": {
+        title: "讲义图转译：Cron 不是另一套 Agent",
+        type: "flow",
+        caption: "来自 s14 最小心智模型：时间触发最终仍回到同一条主循环。",
+        steps: ["cron_create", "写调度记录", "checkLoop 匹配", "通知队列", "主循环注入"]
+      },
+      "S15": {
+        title: "讲义图转译：长期队友与邮箱",
+        type: "lanes",
+        caption: "来自 s15 最小心智模型：队友不是一次性子任务，而是有名字和 inbox 的长期循环。",
+        lanes: [
+          { label: "lead", steps: ["spawn alice / bob", "send message", "读回摘要"] },
+          { label: "alice", steps: ["own messages", "own inbox", "own loop"] },
+          { label: "bob", steps: ["own messages", "own inbox", "own loop"] }
+        ]
+      },
+      "S16": {
+        title: "讲义图转译：协议化协作回路",
+        type: "flow",
+        caption: "来自 s16 接入团队系统流程：request_id 把请求、响应和状态追踪串起来。",
+        steps: ["发起请求", "tracker 记录", "投递 inbox", "对方响应", "状态更新"]
+      },
+      "S17": {
+        title: "讲义图转译：WORK / IDLE 自治循环",
+        type: "flow",
+        caption: "来自 s17 最小心智模型：空闲不是结束，而是等待邮箱或 ready task。",
+        steps: ["WORK", "IDLE", "poll inbox", "claim ready task", "WORK / shutdown"]
+      },
+      "S18": {
+        title: "讲义图转译：任务板和 Worktree 注册表",
+        type: "lanes",
+        caption: "来自 s18 最小心智模型：任务记录目标，worktree 记录执行车道。",
+        lanes: [
+          { label: "任务板", steps: ["做什么", "谁在做", "状态如何"] },
+          { label: "Worktree 注册表", steps: ["在哪做", "目录 / branch", "task_id 绑定"] }
+        ]
+      },
+      "S19": {
+        title: "讲义图转译：MCP 接回统一工具池",
+        type: "flow",
+        caption: "来自 s19 运行时流程：外部工具不绕路，仍经过权限、路由和 tool_result。",
+        steps: ["PluginLoader", "MCP client", "listTools", "统一工具池", "tool_result"]
+      }
+    };
+
+    const lightDiagrams = {
+      "S01": {
+        title: "讲义 Mermaid 转译：Gateway 最小循环",
+        type: "flow",
+        caption: "来自 s01 架构图：先把 stop_reason 分发跑通，tool_use 留给下一课。",
+        steps: ["用户输入", "messages", "LLM API", "stop_reason", "end_turn / tool_use"]
+      },
+      "S02": {
+        title: "讲义 Mermaid 转译：工具调用闭环",
+        type: "flow",
+        caption: "来自 s02 架构图：ToolUseBlock 执行后，ToolResultBlock 回写 messages。",
+        steps: ["LLM + tools", "ToolUseBlock", "TOOL_HANDLERS", "ToolResultBlock", "回到 LLM"]
+      },
+      "S03": {
+        title: "讲义 Mermaid 转译：Session 与 ContextGuard",
+        type: "lanes",
+        caption: "来自 s03 架构图：会话可重放，窗口溢出按阶段恢复。",
+        lanes: [
+          { label: "正常路径", steps: ["load_session", "guard_api_call", "save_turn JSONL"] },
+          { label: "溢出路径", steps: ["截断工具输出", "compact_history", "第三次抛出"] }
+        ]
+      },
+      "S04": {
+        title: "讲义 Mermaid 转译：多 Channel 入口",
+        type: "flow",
+        caption: "来自 s04 架构图：平台差异先标准化成 InboundMessage。",
+        steps: ["CLI / Telegram / 飞书", "InboundMessage", "ChannelManager", "Agent Loop", "平台输出"]
+      },
+      "S05": {
+        title: "讲义 Mermaid 转译：Gateway 路由链",
+        type: "flow",
+        caption: "来自 s05 架构图：入站消息通过五级绑定表找到目标 Agent。",
+        steps: ["Inbound msg", "Gateway", "5级绑定表", "AgentManager", "Agent workspace"]
+      },
+      "S06": {
+        title: "讲义 Mermaid 转译：Intelligence 装配链",
+        type: "flow",
+        caption: "来自 s06 架构图：Bootstrap、Prompt、Skills、Memory 共同生产模型输入。",
+        steps: ["SOUL / IDENTITY", "BootstrapLoader", "8层 Prompt", "Agent Loop", "Skills + Memory"]
+      },
+      "S07": {
+        title: "讲义 Mermaid 转译：主动触发三车道",
+        type: "lanes",
+        caption: "来自 s07 架构图：用户主线优先，heartbeat 和 cron 只在可控时机注入输出。",
+        lanes: [
+          { label: "Main Lane", steps: ["User Input", "lock.acquire", "LLM / Print"] },
+          { label: "Heartbeat", steps: ["Timer tick", "tryLock", "dedup -> OutputQueue"] },
+          { label: "Cron", steps: ["CRON.json", "tick due", "cron-runs.jsonl"] }
+        ]
+      },
+      "S08": {
+        title: "讲义 Mermaid 转译：Delivery WAL",
+        type: "flow",
+        caption: "来自 s08 架构图：先写磁盘队列，再后台投递，失败退避重试。",
+        steps: ["Agent Reply", "chunkMessage", "WAL enqueue", "DeliveryRunner", "ack / backoff"]
+      },
+      "S09": {
+        title: "讲义 Mermaid 转译：三层恢复",
+        type: "lanes",
+        caption: "来自 s09 架构图：认证轮换、溢出恢复、工具循环分别兜底。",
+        lanes: [
+          { label: "Auth Rotation", steps: ["main-key", "backup-key", "cooldown"] },
+          { label: "Overflow", steps: ["compact 0..2", "retry Layer 2"] },
+          { label: "Tool Loop", steps: ["classifyFailure", "fallback models"] }
+        ]
+      },
+      "S10": {
+        title: "讲义 Mermaid 转译：命名 Lane 串行化",
+        type: "lanes",
+        caption: "来自 s10 架构图：CommandQueue 按 lane 入队，每条 LaneQueue FIFO 执行。",
+        lanes: [
+          { label: "main", steps: ["max=1", "FIFO", "pump next"] },
+          { label: "cron", steps: ["max=1", "FIFO", "generation"] },
+          { label: "heartbeat", steps: ["max=1", "FIFO", "taskDone"] }
+        ]
+      }
+    };
+
+    const enterpriseDiagrams = {
+      "E01": {
+        title: "文档 Mermaid 转译：Enterprise 总包图",
+        type: "stack",
+        caption: "来自 overview.md：生产版把教学机制拆成入口、路由、运行时、智能和基础设施。",
+        items: ["API", "Gateway", "Agent Core", "Intelligence", "Infrastructure", "Channels", "Session", "Health"]
+      },
+      "E02": {
+        title: "文档 Mermaid 转译：Gateway 服务链",
+        type: "flow",
+        caption: "来自 gateway.md：多入口最终进入 GatewayService 和 BindingTable。",
+        steps: ["Channels / API / WS", "MessagePump", "GatewayService", "BindingTable", "AgentManager"]
+      },
+      "E03": {
+        title: "文档 Mermaid 转译：Agent Core",
+        type: "flow",
+        caption: "来自 agent-core.md：AgentLoop 周围拆出 ToolRegistry、ContextGuard 和 resilience。",
+        steps: ["AgentLoop", "ToolRegistry", "ToolHandler", "ContextGuard", "Resilience"]
+      },
+      "E04": {
+        title: "文档 Mermaid 转译：Prompt 与 Memory",
+        type: "lanes",
+        caption: "来自 intelligence.md：8 层 Prompt 装配和 5 阶段 Memory Search 分工明确。",
+        lanes: [
+          { label: "Prompt Assembly", steps: ["identity", "tools", "memory", "dynamic"] },
+          { label: "Memory Search", steps: ["filter", "tf-idf/vector", "MMR"] },
+          { label: "Bootstrap", steps: ["load", "truncate", "cap"] }
+        ]
+      },
+      "E05": {
+        title: "文档 Mermaid 转译：Channels 与 Sessions",
+        type: "lanes",
+        caption: "来自 channels.md / sessions.md：入口标准化，历史以 transcript 事件持久化。",
+        lanes: [
+          { label: "Channel Interface", steps: ["InboundMessage", "OutboundMessage", "ChannelManager"] },
+          { label: "Implementations", steps: ["CLI", "Telegram", "Feishu"] },
+          { label: "SessionStore", steps: ["TranscriptEvent", "JSONL", "DmScope"] }
+        ]
+      },
+      "E06": {
+        title: "文档 Mermaid 转译：Delivery 与 Resilience",
+        type: "lanes",
+        caption: "来自 delivery.md / resilience.md：消息投递和模型调用分别有自己的恢复链路。",
+        lanes: [
+          { label: "Delivery WAL", steps: ["enqueue", "DeliveryRunner", "ack / failed"] },
+          { label: "Auth Rotation", steps: ["ProfileManager", "cooldown", "fallback"] },
+          { label: "Overflow", steps: ["ContextGuard", "compact", "retry"] }
+        ]
+      },
+      "E07": {
+        title: "文档 Mermaid 转译：并发与调度",
+        type: "lanes",
+        caption: "来自 concurrency.md / scheduler.md：主动触发必须先进入命名 lane。",
+        lanes: [
+          { label: "CommandQueue", steps: ["main", "cron", "heartbeat"] },
+          { label: "CronJobService", steps: ["tick", "due", "enqueue"] },
+          { label: "HeartbeatService", steps: ["shouldRun", "dedup", "enqueue"] }
+        ]
+      },
+      "E08": {
+        title: "文档 Mermaid 转译：部署与运行时健康",
+        type: "flow",
+        caption: "来自 deployment.md：能启动只是第一步，还要能检查、关停和保留状态。",
+        steps: ["Build jar / image", "Docker / K8s", "Runtime volume", "Health check", "Graceful shutdown"]
+      }
+    };
+
     const slides = document.querySelector(".slides");
 
     function esc(value) {
@@ -869,6 +1283,46 @@ AI Agent 项目拆解版 HTML Slides
       </section>`);
     }
 
+    function diagramFor(projectLabel, no) {
+      if (projectLabel === "AI-Agent-ZeroToOne") return aiDiagrams[no];
+      if (projectLabel === "OpenClaw light-claw-4j") return lightDiagrams[no];
+      if (projectLabel === "OpenClaw enterprise-claw-4j") return enterpriseDiagrams[no];
+      return null;
+    }
+
+    function renderDiagram(diagram) {
+      if (!diagram) return "";
+      let content = "";
+      if (diagram.type === "lanes") {
+        const lanes = diagram.lanes || [];
+        content = `<div class="mini-lanes" style="--lane-count:${lanes.length || 1}">` + lanes.map(function(lane, index) {
+          const steps = (lane.steps || []).map(step => `<div class="mini-lane-step">${esc(step)}</div>`).join("");
+          return `<div class="mini-lane${index === 0 ? " primary" : ""}">
+            <div class="mini-lane-title">${esc(lane.label)}</div>
+            ${steps}
+          </div>`;
+        }).join("") + `</div>`;
+      } else if (diagram.type === "stack") {
+        const items = diagram.items || [];
+        content = `<div class="mini-stack" style="--stack-count:${Math.min(items.length || 1, 8)}">` + items.map(function(item, index) {
+          return `<div class="mini-stack-item${index === 0 ? " primary" : ""}">${esc(item)}</div>`;
+        }).join("") + `</div>`;
+      } else {
+        const steps = diagram.steps || [];
+        content = `<div class="mini-flow">` + steps.map(function(step, index) {
+          const arrow = index < steps.length - 1 ? `<div class="mini-arrow">-&gt;</div>` : "";
+          return `<div class="mini-node${index === 0 ? " primary" : ""}">${esc(step)}</div>${arrow}`;
+        }).join("") + `</div>`;
+      }
+      return `<div class="diagram-mini">
+        <div class="diagram-mini-head">
+          <div class="diagram-mini-title">${esc(diagram.title)}</div>
+          <div class="diagram-mini-caption">${esc(diagram.caption || "")}</div>
+        </div>
+        ${content}
+      </div>`;
+    }
+
     function sessionSlide(part, projectLabel, item) {
       add(`<section data-part="${part}" class="session-slide">
         <div class="session-head">
@@ -885,6 +1339,7 @@ AI Agent 项目拆解版 HTML Slides
           <div class="session-card"><h3>架构原理</h3><p>${esc(item.arch)}</p></div>
           <div class="session-card"><h3>这一页往后长出什么</h3><p>${nextHint(item.no, projectLabel)}</p></div>
         </div>
+        ${renderDiagram(diagramFor(projectLabel, item.no))}
         <div class="code-ref">
           <div class="path">${esc(item.source)}</div>
           <code>${item.code}</code>
@@ -909,6 +1364,7 @@ AI Agent 项目拆解版 HTML Slides
           <div class="session-card"><h3>整体架构</h3><p>${esc(item.arch)}</p></div>
           <div class="session-card"><h3>这一页往后长出什么</h3><p>${enterpriseHint(item.no)}</p></div>
         </div>
+        ${renderDiagram(diagramFor(projectLabel, item.no))}
         <div class="code-ref">
           <div class="path">${esc(item.source)}</div>
           <code>${item.code}</code>
