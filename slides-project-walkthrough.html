@@ -11,7 +11,7 @@ AI Agent 项目拆解版 HTML Slides
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AI Agent 项目拆解路线图</title>
+  <title>Java 版 AI Agent 工程化路线图</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -133,6 +133,54 @@ AI Agent 项目拆解版 HTML Slides
     .chapter h2 {
       font-size: 2.36em;
       max-width: 1100px;
+    }
+
+    .cover {
+      padding-top: 78px;
+    }
+
+    .cover h1 {
+      max-width: 1160px;
+      font-size: 3.18em;
+      line-height: 1.04;
+    }
+
+    .cover .subtitle {
+      max-width: 1060px;
+      font-size: 0.86em;
+    }
+
+    .cover-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 34px;
+      max-width: 1080px;
+    }
+
+    .cover-badge {
+      font-family: var(--font-heading);
+      font-size: 0.38em;
+      font-weight: 700;
+      color: var(--text);
+      background: rgba(255, 248, 231, 0.72);
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 9px 13px;
+      box-shadow: 0 10px 24px rgba(82, 60, 35, 0.06);
+    }
+
+    .cover-hook {
+      margin-top: 38px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      max-width: 1080px;
+    }
+
+    .cover-hook .panel {
+      min-height: 112px;
     }
 
     .chapter-line {
@@ -578,6 +626,7 @@ AI Agent 项目拆解版 HTML Slides
       .layout-2,
       .layout-3,
       .layout-4,
+      .cover-hook,
       .route,
       .session-grid,
       .code-ref,
@@ -1469,12 +1518,24 @@ AI Agent 项目拆解版 HTML Slides
     }
 
     function buildDeck() {
-      add(`<section data-part="1" class="chapter">
-        <div class="eyebrow">AI Agent Project Walkthrough</div>
-        <h1>别混着讲了：按项目把 Agent 架构走一遍</h1>
-        <p class="subtitle">重构版从 AI-Agent-ZeroToOne 开始，再到 OpenClaw light-claw-4j，最后看 enterprise-claw-4j 如何把教学机制拆成生产模块。</p>
+      add(`<section data-part="1" class="chapter cover">
+        <div class="eyebrow">Java Edition / AI Agent Engineering</div>
+        <h1>别只会调 API：用 Java 手搓一个能干活的 AI Agent</h1>
+        <p class="subtitle">从 AI-Agent-ZeroToOne 的 mini-agent-4j，到 OpenClaw-ZeroToOne 的 light-claw-4j / enterprise-claw-4j：一条 Java 版 Runtime -> Gateway -> 企业化的源码路线。</p>
+        <div class="cover-badges">
+          <div class="cover-badge">Java 21</div>
+          <div class="cover-badge">mini-agent-4j</div>
+          <div class="cover-badge">light-claw-4j</div>
+          <div class="cover-badge">enterprise-claw-4j</div>
+          <div class="cover-badge">Runtime -> Gateway -> Spring Boot</div>
+        </div>
+        <div class="cover-hook">
+          <div class="panel"><h3>不是 Prompt 小技巧</h3><p>从消息循环、工具回写、上下文压缩开始，先把 Agent 能行动这件事讲透。</p></div>
+          <div class="panel"><h3>不是纯概念架构图</h3><p>每个知识点都贴回 Java 源码入口，知道设计最后落在哪个类和方法上。</p></div>
+          <div class="panel"><h3>不是 Demo 到此为止</h3><p>最后看 Gateway、多渠道、可靠投递、并发车道和 Spring Boot 生产化拆分。</p></div>
+        </div>
         <div class="chapter-line"></div>
-        <aside class="notes">开场说明：旧版按知识点融合，适合复盘；这一版按项目顺序，更适合初学者第一次建立路径。</aside>
+        <aside class="notes">开场说明：这是一条 Java 版源码路线，不是泛泛讲 Agent 概念。先建立期待：从最小 Loop 到企业级 Gateway。</aside>
       </section>`);
 
       slide("1", "今天的路线：先学 Runtime，再学 Gateway，最后看生产化",
