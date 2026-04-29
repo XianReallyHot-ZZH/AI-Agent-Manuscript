@@ -1,0 +1,1102 @@
+<!--
+AI Agent 项目拆解版 HTML Slides
+预览建议：
+  在项目根目录运行：python3 -m http.server 8000 --bind 127.0.0.1
+  然后访问：http://127.0.0.1:8000/slides-project-walkthrough.html
+
+说明：旧 slides.html 保留不动；本文件按项目顺序重构内容。
+-->
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AI Agent 项目拆解路线图</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;family=Lora:wght@400;500;600&amp;family=Poppins:wght@500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+
+  <style>
+    :root {
+      --bg: #f2dfb2;
+      --bg-2: #f7ebca;
+      --surface: #fff8e7;
+      --surface-2: #f8edcc;
+      --text: #2d261f;
+      --muted: #6e6254;
+      --line: rgba(103, 86, 63, 0.22);
+      --orange: #c96442;
+      --blue: #4f789d;
+      --green: #657f4f;
+      --plum: #866078;
+      --accent: var(--orange);
+      --font-heading: 'Poppins', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+      --font-body: 'Lora', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', Georgia, serif;
+      --font-code: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
+    }
+
+    html,
+    body {
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    .reveal {
+      font-family: var(--font-body);
+      color: var(--text);
+      background:
+        linear-gradient(180deg, rgba(255, 250, 232, 0.52), rgba(242, 223, 178, 0.9)),
+        var(--bg);
+    }
+
+    .reveal .slides {
+      text-align: left;
+    }
+
+    .reveal section {
+      --accent: var(--orange);
+      box-sizing: border-box;
+      height: 100%;
+      padding: 52px 62px 90px;
+    }
+
+    .reveal section[data-part="2"] { --accent: var(--orange); }
+    .reveal section[data-part="3"] { --accent: var(--blue); }
+    .reveal section[data-part="4"] { --accent: var(--green); }
+    .reveal section[data-part="5"] { --accent: var(--plum); }
+
+    .reveal h1,
+    .reveal h2,
+    .reveal h3 {
+      font-family: var(--font-heading);
+      letter-spacing: 0;
+      color: var(--text);
+      margin: 0;
+      line-height: 1.08;
+      text-transform: none;
+    }
+
+    .reveal h1 {
+      font-size: 3.05em;
+      font-weight: 700;
+      max-width: 1120px;
+    }
+
+    .reveal h2 {
+      font-size: 1.46em;
+      font-weight: 650;
+      margin-bottom: 22px;
+    }
+
+    .reveal h3 {
+      font-size: 0.62em;
+      color: var(--accent);
+      font-weight: 650;
+      margin-bottom: 8px;
+    }
+
+    .eyebrow {
+      font-family: var(--font-heading);
+      color: var(--accent);
+      font-size: 0.45em;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .subtitle,
+    .lead {
+      color: var(--muted);
+      font-size: 0.82em;
+      line-height: 1.5;
+      max-width: 980px;
+      margin-top: 24px;
+    }
+
+    .lead {
+      color: var(--text);
+      font-size: 0.95em;
+    }
+
+    .accent {
+      color: var(--accent);
+    }
+
+    .chapter {
+      padding-top: 118px;
+    }
+
+    .chapter h2 {
+      font-size: 2.36em;
+      max-width: 1100px;
+    }
+
+    .chapter-line {
+      width: 170px;
+      height: 6px;
+      background: var(--accent);
+      margin-top: 34px;
+      border-radius: 999px;
+    }
+
+    .layout-2,
+    .layout-3,
+    .layout-4 {
+      display: grid;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .layout-2 { grid-template-columns: repeat(2, 1fr); }
+    .layout-3 { grid-template-columns: repeat(3, 1fr); }
+    .layout-4 { grid-template-columns: repeat(4, 1fr); }
+
+    .panel,
+    .session-card,
+    .code-ref,
+    .diagram-box {
+      background: rgba(255, 248, 231, 0.74);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 14px 34px rgba(82, 60, 35, 0.08);
+    }
+
+    .panel {
+      padding: 20px 22px;
+    }
+
+    .panel p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.62em;
+      line-height: 1.45;
+    }
+
+    .panel strong {
+      color: var(--text);
+      font-family: var(--font-heading);
+      font-weight: 650;
+    }
+
+    .route {
+      display: grid;
+      grid-template-columns: 1fr 34px 1fr 34px 1fr;
+      gap: 14px;
+      align-items: center;
+      margin-top: 30px;
+    }
+
+    .arrow {
+      text-align: center;
+      color: var(--accent);
+      font-family: var(--font-heading);
+      font-size: 0.82em;
+      font-weight: 700;
+    }
+
+    .session-head {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 18px;
+      align-items: start;
+      margin-bottom: 20px;
+    }
+
+    .session-no {
+      font-family: var(--font-heading);
+      font-size: 1.28em;
+      line-height: 1;
+      color: var(--accent);
+      font-weight: 700;
+      border-top: 5px solid var(--accent);
+      padding-top: 12px;
+    }
+
+    .session-subtitle {
+      color: var(--muted);
+      font-size: 0.62em;
+      line-height: 1.42;
+      margin-top: 9px;
+    }
+
+    .session-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 13px;
+    }
+
+    .session-card {
+      min-height: 148px;
+      padding: 16px 16px;
+    }
+
+    .session-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.54em;
+      line-height: 1.43;
+    }
+
+    .code-ref {
+      margin-top: 14px;
+      padding: 14px 16px;
+      display: grid;
+      grid-template-columns: 1.1fr 1.6fr;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .code-ref .path {
+      font-family: var(--font-code);
+      font-size: 0.42em;
+      line-height: 1.35;
+      color: var(--muted);
+      word-break: break-all;
+    }
+
+    .code-ref code {
+      font-family: var(--font-code);
+      display: block;
+      color: var(--text);
+      background: rgba(201, 100, 66, 0.09);
+      border-left: 4px solid var(--accent);
+      padding: 10px 12px;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.48em;
+      line-height: 1.35;
+      white-space: normal;
+    }
+
+    .diagram-box {
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .diagram-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .diagram-row.three { grid-template-columns: repeat(3, 1fr); }
+    .diagram-row.six { grid-template-columns: repeat(6, 1fr); }
+
+    .node {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(248, 237, 204, 0.66);
+      padding: 14px 14px;
+      min-height: 96px;
+    }
+
+    .node.primary {
+      border-color: var(--accent);
+    }
+
+    .node-title {
+      font-family: var(--font-heading);
+      color: var(--accent);
+      font-size: 0.52em;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .node p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.5em;
+      line-height: 1.36;
+    }
+
+    .takeaway {
+      border-left: 5px solid var(--accent);
+      background: rgba(255, 248, 231, 0.66);
+      border-radius: 0 8px 8px 0;
+      padding: 15px 18px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.6em;
+      line-height: 1.42;
+    }
+
+    .takeaway strong {
+      color: var(--text);
+      font-family: var(--font-heading);
+      font-weight: 650;
+    }
+
+    .source {
+      font-family: var(--font-code);
+      color: var(--muted);
+      font-size: 0.42em;
+      line-height: 1.35;
+      margin-top: 10px;
+      word-break: break-all;
+    }
+
+    .stack-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .stack-item {
+      display: grid;
+      grid-template-columns: 160px 1fr 1.2fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .stack-item > div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 248, 231, 0.72);
+      padding: 12px 14px;
+      color: var(--muted);
+      font-size: 0.52em;
+      line-height: 1.38;
+    }
+
+    .stack-item .label {
+      color: var(--accent);
+      font-family: var(--font-heading);
+      font-weight: 700;
+    }
+
+    .slide-footer {
+      position: absolute;
+      left: 62px;
+      right: 62px;
+      bottom: 28px;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-family: var(--font-heading);
+      font-size: 0.38em;
+    }
+
+    .slide-footer .part-label {
+      color: var(--accent);
+      font-weight: 650;
+    }
+
+    .deck-progress {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      height: 4px;
+      width: 0;
+      background: var(--orange);
+      z-index: 30;
+    }
+
+    .reveal .controls {
+      color: var(--accent);
+    }
+
+    @media (max-width: 760px) {
+      .reveal section {
+        padding: 42px 36px 82px;
+      }
+      .chapter {
+        padding-top: 92px;
+      }
+      .chapter h2 {
+        font-size: 1.58em;
+      }
+      .layout-2,
+      .layout-3,
+      .layout-4,
+      .route,
+      .session-grid,
+      .code-ref,
+      .diagram-row,
+      .diagram-row.three,
+      .diagram-row.six,
+      .stack-item {
+        grid-template-columns: 1fr;
+      }
+      .arrow {
+        transform: rotate(90deg);
+      }
+      .session-head {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .session-card {
+        min-height: auto;
+      }
+      .slide-footer {
+        left: 36px;
+        right: 36px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="deck-progress"></div>
+  <div class="reveal">
+    <div class="slides"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/notes/notes.js"></script>
+  <script>
+    const partNames = {
+      "1": "开场地图",
+      "2": "AI-Agent-ZeroToOne",
+      "3": "OpenClaw light-claw-4j",
+      "4": "enterprise-claw-4j",
+      "5": "收束与 Q&A"
+    };
+
+    const aiSessions = [
+      {
+        no: "S01",
+        title: "5 行循环：先让模型会“转一圈”",
+        subtitle: "The Agent Loop",
+        knowledge: "Agent 不是神秘对象，而是消息、模型调用、stop_reason 和 tool_result 组成的闭环。",
+        model: "看见上下文 -> 调模型 -> 判断是否工具调用 -> 写回结果 -> 下一轮。",
+        arch: "智能在模型里，Harness 只负责把输入、工具和结果排成稳定协议。",
+        code: "private static void agentLoop(AnthropicClient client, LoopState state)",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S01AgentLoop.java:331"
+      },
+      {
+        no: "S02",
+        title: "给模型装上双手：工具分发从 Map 开始",
+        subtitle: "Tool Use",
+        knowledge: "模型输出 tool_use，系统根据工具名找到 handler，并把结果包装回消息流。",
+        model: "工具不是普通函数；它是模型可请求、系统可治理的外部能力。",
+        arch: "Schema 面向模型，Handler 面向真实世界，二者用工具名连接。",
+        code: "Map&lt;String, Function&lt;Map&lt;String, Object&gt;, String&gt;&gt; toolHandlers",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S02ToolUse.java:741-745"
+      },
+      {
+        no: "S03",
+        title: "你的 Agent 为什么跑偏？先把计划写出来",
+        subtitle: "TodoWrite",
+        knowledge: "TodoWrite 把长任务进度从模型隐式记忆变成可检查的外部状态。",
+        model: "不要让模型“记得自己正在做什么”，让它每轮都能读到当前计划。",
+        arch: "PlanningState 记录 items 与 rounds_since_update，Nag Reminder 负责把偏航拉回来。",
+        code: "static class PlanningState; private static class PlanItem",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S03TodoWrite.java:132,380"
+      },
+      {
+        no: "S04",
+        title: "开一个干净脑袋：Subagent 是上下文隔离",
+        subtitle: "Subagents",
+        knowledge: "复杂探索不要污染主对话，子 Agent 用独立消息列表处理子问题。",
+        model: "父 Agent 提任务，子 Agent 自己探索，只把结论摘要带回来。",
+        arch: "这是从单进程循环走向多 Agent 协作的第一步：先隔离上下文，再谈并行。",
+        code: "S04Subagent + 子 Agent 专用 TOOL_HANDLERS 子集",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S04Subagent.java:54,565"
+      },
+      {
+        no: "S05",
+        title: "知识别一次塞满：Skill 先给目录，再给正文",
+        subtitle: "Skill Loading",
+        knowledge: "Skill 解决“知识太多但当前只需要一小块”的问题。",
+        model: "先注入技能清单；模型需要细节时，再调用 load_skill 读取正文。",
+        arch: "两层知识注入降低上下文噪声，也让领域知识可以按目录维护。",
+        code: "TOOL_HANDLERS.put(\"load_skill\", input -> ...)",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S05SkillLoading.java:520-537"
+      },
+      {
+        no: "S06",
+        title: "失忆不是模型变笨：Compact 是交接文档",
+        subtitle: "Context Compact",
+        knowledge: "窗口压力出现时，不是丢历史，而是保留目标、事实、决策和未完成动作。",
+        model: "大工具结果先落盘，旧输出微压缩，历史过长再整体压缩。",
+        arch: "CompactState 把最近文件、压缩次数和持久化输出标记组织起来。",
+        code: "static class CompactState; private static void agentLoop(..., CompactState compactState)",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S06ContextCompact.java:444,769"
+      },
+      {
+        no: "S07",
+        title: "工具越强，刹车越要早：权限系统接管副作用",
+        subtitle: "Permission System",
+        knowledge: "权限系统在工具执行前做 deny、mode、allow、ask 的决策。",
+        model: "模型可以提出意图，但是否真的执行由系统边界决定。",
+        arch: "把危险操作集中到一条权限管线，避免每个 handler 自己写散乱 if。",
+        code: "S07PermissionSystem.agentLoop(...); TOOL_HANDLERS",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S07PermissionSystem.java:904,1061"
+      },
+      {
+        no: "S08",
+        title: "别把扩展写进主循环：Hook 是生命周期插槽",
+        subtitle: "Hook System",
+        knowledge: "Hook 让 PreToolUse、PostToolUse 等扩展点有统一事件和返回结构。",
+        model: "主循环不关心谁在旁边观察，只负责在固定时机发事件。",
+        arch: "HookRunner 把横切逻辑从工具执行里拆出来，审计、改写、拦截都能挂载。",
+        code: "S08HookSystem.agentLoop(...); HookEvent / HookResult / HookRunner",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S08HookSystem.java:54,1064"
+      },
+      {
+        no: "S09",
+        title: "记忆不是聊天记录：只存跨会话还重要的事实",
+        subtitle: "Memory System",
+        knowledge: "Memory 解决跨会话事实、偏好、反馈和项目知识的持久保存。",
+        model: "能重新推导的不存；会影响未来行为、且不容易重建的才存。",
+        arch: "MemoryManager 用 frontmatter 文件组织记忆，并在系统提示词中按需注入。",
+        code: "static class MemoryManager; private static final MemoryManager memoryMgr",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S09MemorySystem.java:162,701"
+      },
+      {
+        no: "S10",
+        title: "System Prompt 不是一段文案：它是装配流水线",
+        subtitle: "System Prompt Construction",
+        knowledge: "身份、工具、记忆、环境、动态提醒不能混成一个不可维护的大字符串。",
+        model: "稳定说明放 prompt block，临时事实放 reminder，消息流保留交互历史。",
+        arch: "SystemPromptBuilder 把不同来源分段组装，便于测试、缓存和动态更新。",
+        code: "static class SystemPromptBuilder; new SystemPromptBuilder(WORK_DIR, tools, model)",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S10SystemPrompt.java:512,1123"
+      },
+      {
+        no: "S11",
+        title: "失败不可怕，可怕的是不知道失败到哪一步",
+        subtitle: "Error Recovery",
+        knowledge: "恢复不是盲目重试，而是按截断、上下文过长、连接抖动分路径处理。",
+        model: "输出截断就续写；上下文太长先压缩；网络抖动退避重试。",
+        arch: "恢复状态机围绕模型调用外层与工具循环内层分别兜底。",
+        code: "backoffDelay(); autoCompact(); agentLoop(... maxOutputRecoveryCount)",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S11ErrorRecovery.java:499,527,667"
+      },
+      {
+        no: "S12",
+        title: "从 Todo 到任务图：让工作可以被认领和解锁",
+        subtitle: "Task System",
+        knowledge: "任务系统把单次会话计划升级成可持久化、可依赖、可解锁的工作图。",
+        model: "TaskRecord 记录任务本身，依赖关系决定哪些任务 ready。",
+        arch: "task_create / task_update / task_list 等工具把任务图暴露给模型操作。",
+        code: "defineTool(\"task_create\", ...); handlers.put(\"task_update\", ...)",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S12TaskSystem.java:91,113-132"
+      },
+      {
+        no: "S13",
+        title: "别阻塞主对话：后台任务要会回来报信",
+        subtitle: "Background Tasks",
+        knowledge: "后台任务把长耗时工作从前台对话拆出去，完成后写通知队列。",
+        model: "主 Agent 发起后台执行，下一轮开始前排空通知，把结果重新带回上下文。",
+        arch: "运行时任务和工作图任务不是一回事：一个管执行生命周期，一个管业务依赖。",
+        code: "S13BackgroundTasks.agentLoop(...); RuntimeTaskRecord / Notification",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S13BackgroundTasks.java:38,135"
+      },
+      {
+        no: "S14",
+        title: "让 Agent 未来自己回来：Cron 把时间变成触发器",
+        subtitle: "Cron Scheduler",
+        knowledge: "定时调度让 Agent 不只响应用户，也能在未来时间点主动注入任务。",
+        model: "创建调度记录，定时检查，到点后把 prompt 注入会话。",
+        arch: "持久化调度文件、cron lock、jitter 共同避免重复触发和惊群。",
+        code: "SCHEDULED_TASKS_FILE; CRON_LOCK_FILE; JITTER_MINUTES",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S14CronScheduler.java:111-121"
+      },
+      {
+        no: "S15",
+        title: "多 Agent 的第一步：不要共享脑袋，共享邮箱",
+        subtitle: "Agent Teams",
+        knowledge: "团队协作先从可靠消息开始：队友有名册、邮箱、消息类型。",
+        model: "Lead Agent 发消息，Teammate 轮询 inbox，再用自己的上下文继续工作。",
+        arch: "JSONL 邮箱是 append-only 协议，简单、可审计、崩溃后可重放。",
+        code: "VALID_MSG_TYPES; MessageBus bus; TeammateManager teamMgr",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S15AgentTeams.java:108-141"
+      },
+      {
+        no: "S16",
+        title: "协作要有礼貌：握手协议让团队可恢复",
+        subtitle: "Team Protocols",
+        knowledge: "计划审批、优雅关机、请求响应都需要 request_id 和状态机。",
+        model: "不是发一句消息就完事，而是发请求、等响应、超时处理、更新追踪表。",
+        arch: "ProtocolEnvelope 和 RequestRecord 把分布式协作从闲聊变成协议。",
+        code: "S16TeamProtocols; agentLoop(... ProtocolEnvelope / RequestRecord)",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S16TeamProtocols.java:64,1211"
+      },
+      {
+        no: "S17",
+        title: "自治不是放飞：Idle 只是另一种工作状态",
+        subtitle: "Autonomous Agents",
+        knowledge: "自治 Agent 在空闲时轮询邮箱、扫描可认领任务，再进入工作循环。",
+        model: "WORK -> IDLE -> poll -> claim -> work，所有动作都留下事件。",
+        arch: "Claimable Predicate、Claim Event Log、Durable Request 让自动认领可追踪。",
+        code: "defineTool(\"claim_task\", ...); agentLoop(...)",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S17AutonomousAgents.java:155,200"
+      },
+      {
+        no: "S18",
+        title: "团队改代码先隔离目录：Worktree 是物理边界",
+        subtitle: "Worktree Task Isolation",
+        knowledge: "多个 Agent 并行写代码时，最先需要的是目录级隔离和所有权记录。",
+        model: "任务先认领，再创建 worktree，进入隔离目录执行，最后 closeout。",
+        arch: "TaskRecord、WorktreeRecord、CloseoutRecord 把任务、目录和收尾事件串起来。",
+        code: "S18WorktreeIsolation.agentLoop(...); WorktreeRecord / CloseoutRecord",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S18WorktreeIsolation.java:37,170"
+      },
+      {
+        no: "S19",
+        title: "最后接上外部世界：MCP 仍然走同一条工具管线",
+        subtitle: "MCP Plugin",
+        knowledge: "MCP 把外部服务标准化成工具，但不应该绕开权限、路由和结果回写。",
+        model: "MCPClient 连接服务，MCPToolRouter 处理 mcp__ 前缀工具名。",
+        arch: "外部工具和本地工具合并成一个工具池，模型仍然只看到 tool_use。",
+        code: "static class MCPClient; static class MCPToolRouter; mcpRouter.getClients()",
+        source: "vendors/AI-Agent-ZeroToOne/mini-agent-4j/src/main/java/com/example/agent/sessions/S19McpPlugin.java:350,649,1509"
+      }
+    ];
+
+    const lightSessions = [
+      {
+        no: "S01",
+        title: "Gateway 也从 while True 开始",
+        subtitle: "Agent Loop",
+        knowledge: "OpenClaw 先把 CLI 对话跑通，核心仍是 stop_reason 分发。",
+        model: "用户输入进入 messages，调用 LLM，end_turn 打印，tool_use 留给下一课处理。",
+        arch: "先不做多平台，先保证最小运行时语义清楚。",
+        code: "static void agentLoop()",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S01AgentLoop.java:82"
+      },
+      {
+        no: "S02",
+        title: "给 Gateway 装工具：Schema 表和 Handler 表分开",
+        subtitle: "Tool Use",
+        knowledge: "四个内置工具 bash/read_file/write_file/edit_file 让 Agent 能行动。",
+        model: "模型看 JSON Schema，系统用 TOOL_HANDLERS 执行真实副作用。",
+        arch: "这和 AI-Agent S02 同源，但 OpenClaw 为后续 Gateway 路由保留了更强边界。",
+        code: "static final Map&lt;String, Function&lt;Map&lt;String, Object&gt;, String&gt;&gt; TOOL_HANDLERS",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S02ToolUse.java:352"
+      },
+      {
+        no: "S03",
+        title: "会话不能只存在内存里：JSONL 让上下文可重放",
+        subtitle: "Sessions & Context Guard",
+        knowledge: "会话以 JSONL append-only 保存，读取时重放，过大时 ContextGuard 介入。",
+        model: "每次交互都是事件；重启后重放事件即可恢复上下文。",
+        arch: "SessionStore 与 ContextGuard 把“记住对话”和“窗口不过载”放到同一层。",
+        code: "record JSONL map; static class ContextGuard; agentLoop()",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S03Sessions.java:333,564,913"
+      },
+      {
+        no: "S04",
+        title: "同一个大脑，多个嘴巴：Channel 把平台差异挡在外面",
+        subtitle: "Channels",
+        knowledge: "CLI、Telegram、飞书消息格式不同，但 Agent 不应该知道这些细节。",
+        model: "平台事件标准化成 InboundMessage，再统一进入 Agent Loop。",
+        arch: "Channel 接口、InboundMessage、ChannelManager 是 Gateway 的第一块积木。",
+        code: "record InboundMessage; interface Channel; static class ChannelManager",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S04Channels.java:130,194,943"
+      },
+      {
+        no: "S05",
+        title: "每条消息都要找到归宿：五级绑定表路由",
+        subtitle: "Gateway & Routing",
+        knowledge: "Gateway 根据 peer、guild、account、channel、default 解析目标 Agent。",
+        model: "消息先进 Gateway，再通过 BindingTable 找到 AgentManager 中的配置。",
+        arch: "WebSocket JSON-RPC 2.0 暴露管理入口，多 Agent 管理从这里开始。",
+        code: "record Binding; static class BindingTable; onMessage(WebSocket, String)",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S05GatewayRouting.java:181,212,706"
+      },
+      {
+        no: "S06",
+        title: "赋予灵魂，教会记忆：Intelligence 是装配链",
+        subtitle: "Intelligence",
+        knowledge: "八层系统提示词、技能发现、混合记忆检索一起构成智能输入。",
+        model: "Bootstrap 文件提供稳定人格，MemoryStore 按任务召回事实，SkillsManager 给能力目录。",
+        arch: "TF-IDF、哈希向量、MMR 组合，避免把长期记忆全塞进上下文。",
+        code: "BootstrapLoader; SkillsManager; MemoryStore; agentLoop()",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S06Intelligence.java:250,347,525,1352"
+      },
+      {
+        no: "S07",
+        title: "Agent 不只被动回答：Heartbeat 和 Cron 让它主动起来",
+        subtitle: "Heartbeat & Cron",
+        knowledge: "心跳检查和定时任务让 Agent 在没有用户输入时也能触发行为。",
+        model: "Heartbeat 做主动检查；Cron 按 at/every/cron 三种调度注入工作。",
+        arch: "ReentrantLock + tryLock 保证用户对话优先，后台触发不能污染主线。",
+        code: "record ShouldRunResult; static class CronService; agentLoop()",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S07HeartbeatCron.java:510,562,906"
+      },
+      {
+        no: "S08",
+        title: "先写磁盘，再发出去：Delivery 保护最后一公里",
+        subtitle: "Delivery",
+        knowledge: "外部平台会失败，所以消息必须先进入 WAL 队列，再尝试投递。",
+        model: "QueuedDelivery 落盘，DeliveryRunner 后台发送，失败指数退避。",
+        arch: "tmp -> fsync -> atomic rename 让“发没发出去”有可恢复状态。",
+        code: "record QueuedDelivery; writeAtomically(); static class DeliveryQueue",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S08Delivery.java:128,175,215"
+      },
+      {
+        no: "S09",
+        title: "一次调用失败，不等于系统失败：三层重试洋葱",
+        subtitle: "Resilience",
+        knowledge: "认证、限流、上下文溢出、工具错误不是同一种失败。",
+        model: "ProfileManager 轮换 key，ContextGuard 压缩恢复，Tool Loop 接收错误继续推理。",
+        arch: "恢复策略按层处理，避免所有异常都变成同一个 retry。",
+        code: "ProfileManager; ContextGuard; static void agentLoop()",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S09Resilience.java:216,330,970"
+      },
+      {
+        no: "S10",
+        title: "给混乱分车道：命名 Lane 串行化状态",
+        subtitle: "Concurrency",
+        knowledge: "main、cron、heartbeat 这些工作不应该随意交错修改同一 Agent 状态。",
+        model: "CommandQueue 按 lane 入队，LaneQueue FIFO 执行，generation 取消过期任务。",
+        arch: "用命名车道而不是无限并发，先保护状态边界，再谈吞吐。",
+        code: "record QueuedItem; static class LaneQueue; static class CommandQueue",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/light-claw-4j/src/main/java/com/claw0/sessions/S10Concurrency.java:129,150,370"
+      }
+    ];
+
+    const enterpriseModules = [
+      {
+        no: "E01",
+        title: "从单文件脚本到 Spring Boot 服务：先看总包图",
+        subtitle: "Project Structure",
+        knowledge: "enterprise-claw-4j 把教学版的每课一文件拆成 agent、gateway、tool、delivery、resilience 等包。",
+        model: "不是换框架，而是把边界从“章节”升级成“模块”。",
+        arch: "API Layer -> Gateway -> Agent Core -> Intelligence -> Infrastructure -> Channels/Session/Health。",
+        code: "EnterpriseClaw4jApplication; com.openclaw.enterprise.* packages",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/src/main/java/com/openclaw/enterprise/EnterpriseClaw4jApplication.java:14"
+      },
+      {
+        no: "E02",
+        title: "Gateway 变成服务：路由、绑定、消息泵各司其职",
+        subtitle: "Gateway Module",
+        knowledge: "GatewayService 负责路由执行，BindingTable 负责五级匹配，MessagePumpService 负责入站消息泵。",
+        model: "light 的 S05 是一个文件；enterprise 把路由链拆成可测试服务。",
+        arch: "REST、WebSocket JSON-RPC、Channel 入站最终都走 GatewayService。",
+        code: "GatewayService; BindingTable; GatewayController; GatewayWebSocketHandler",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/src/main/java/com/openclaw/enterprise/gateway/GatewayService.java:32"
+      },
+      {
+        no: "E03",
+        title: "Agent Core：把 while-true 心脏做成可注入组件",
+        subtitle: "Agent Runtime",
+        knowledge: "AgentLoop、ToolRegistry、ContextGuard 组成生产版运行时核心。",
+        model: "模型循环仍然在，但工具注册、上下文保护、token 估算都被拆成独立类。",
+        arch: "ToolHandler 接口自动注册，ContextGuard 链式恢复，DmScope 控制会话隔离。",
+        code: "AgentLoop; ToolRegistry; ToolHandler; ContextGuard",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/src/main/java/com/openclaw/enterprise/agent/AgentLoop.java:50"
+      },
+      {
+        no: "E04",
+        title: "Intelligence：8 层上下文，5 阶段检索",
+        subtitle: "Prompt & Memory",
+        knowledge: "PromptAssembler、MemoryStore、BootstrapLoader、SkillsManager 一起生产每轮模型输入。",
+        model: "提示词、技能、记忆和运行态不是散文，而是可组合数据源。",
+        arch: "MemoryStore 负责混合检索，PromptAssembler 负责按层装配，BootstrapLoader 负责容量保护。",
+        code: "PromptAssembler; MemoryStore; BootstrapLoader; SkillsManager",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/src/main/java/com/openclaw/enterprise/intelligence/PromptAssembler.java:32"
+      },
+      {
+        no: "E05",
+        title: "Channels & Sessions：多平台入口和 JSONL 记账本",
+        subtitle: "Channels / Sessions",
+        knowledge: "Channel 接口统一 CLI、Telegram、飞书；SessionStore 用 JSONL 记录 transcript。",
+        model: "平台适配负责把消息翻译成统一格式，会话层负责可恢复历史。",
+        arch: "InboundMessage 是入口契约，TranscriptEvent 是持久化契约。",
+        code: "Channel; InboundMessage; ChannelManager; SessionStore",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/src/main/java/com/openclaw/enterprise/channel/Channel.java:25"
+      },
+      {
+        no: "E06",
+        title: "Delivery & Resilience：生产系统先承认会失败",
+        subtitle: "Reliability",
+        knowledge: "DeliveryQueue 保护外部投递，ResilienceRunner 保护模型调用，ProfileManager 管理冷却。",
+        model: "一个管消息不丢，一个管调用不崩；都依赖明确状态。",
+        arch: "WAL、三层重试、异常分类共同把失败关进可恢复链路。",
+        code: "DeliveryQueue; DeliveryRunner; ResilienceRunner; ProfileManager",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/src/main/java/com/openclaw/enterprise/delivery/DeliveryQueue.java:48"
+      },
+      {
+        no: "E07",
+        title: "Concurrency & Scheduler：主动工作也要排队",
+        subtitle: "Concurrency / Scheduler",
+        knowledge: "CommandQueue 和 LaneQueue 给 main、cron、heartbeat 分车道；CronJobService 和 HeartbeatService 产生主动触发。",
+        model: "主动 Agent 不是随便开线程，而是按 lane 串行化状态修改。",
+        arch: "generation invalidation、FIFO、@Scheduled tick 让后台触发可控。",
+        code: "CommandQueue; LaneQueue; CronJobService; HeartbeatService",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/src/main/java/com/openclaw/enterprise/concurrency/CommandQueue.java:30"
+      },
+      {
+        no: "E08",
+        title: "Deployment & Health：能跑还不够，要能关、能查、能部署",
+        subtitle: "Operations",
+        knowledge: "Docker/K8s、优雅关闭、工作区健康检查把教学项目推向真实运行环境。",
+        model: "生产服务要回答：怎么启动、怎么停止、怎么检查、怎么保留状态。",
+        arch: "GracefulShutdownManager 与 WorkspaceHealthIndicator 把运行时健康纳入 Spring Boot 生命周期。",
+        code: "GracefulShutdownManager; WorkspaceHealthIndicator; deployment docs",
+        source: "vendors/OpenClaw-ZeroToOne/claw-4j/enterprise-claw-4j/src/main/java/com/openclaw/enterprise/health/GracefulShutdownManager.java:32"
+      }
+    ];
+
+    const slides = document.querySelector(".slides");
+
+    function esc(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function add(html) {
+      slides.insertAdjacentHTML("beforeend", html);
+    }
+
+    function slide(part, title, body, notes = "") {
+      add(`<section data-part="${part}">
+        <h2>${title}</h2>
+        ${body}
+        <aside class="notes">${notes}</aside>
+      </section>`);
+    }
+
+    function chapter(part, eyebrow, title, subtitle, notes = "") {
+      add(`<section data-part="${part}" class="chapter">
+        <div class="eyebrow">${eyebrow}</div>
+        <h2>${title}</h2>
+        <p class="subtitle">${subtitle}</p>
+        <div class="chapter-line"></div>
+        <aside class="notes">${notes}</aside>
+      </section>`);
+    }
+
+    function sessionSlide(part, projectLabel, item) {
+      add(`<section data-part="${part}" class="session-slide">
+        <div class="session-head">
+          <div class="session-no">${esc(item.no)}</div>
+          <div>
+            <div class="eyebrow">${esc(projectLabel)} / ${esc(item.subtitle)}</div>
+            <h2>${esc(item.title)}</h2>
+            <div class="session-subtitle">每页固定按“知识点 -> 最小心智模型 -> 架构原理 -> 核心代码”讲，避免初学者在概念之间来回跳。</div>
+          </div>
+        </div>
+        <div class="session-grid">
+          <div class="session-card"><h3>知识点</h3><p>${esc(item.knowledge)}</p></div>
+          <div class="session-card"><h3>最小心智模型</h3><p>${esc(item.model)}</p></div>
+          <div class="session-card"><h3>架构原理</h3><p>${esc(item.arch)}</p></div>
+          <div class="session-card"><h3>这一页往后长出什么</h3><p>${nextHint(item.no, projectLabel)}</p></div>
+        </div>
+        <div class="code-ref">
+          <div class="path">${esc(item.source)}</div>
+          <code>${item.code}</code>
+        </div>
+        <aside class="notes">${esc(projectLabel)} ${esc(item.no)}：先讲这一课解决的问题，再讲代码里哪个类或方法承载这个设计。</aside>
+      </section>`);
+    }
+
+    function moduleSlide(part, projectLabel, item) {
+      add(`<section data-part="${part}" class="session-slide">
+        <div class="session-head">
+          <div class="session-no">${esc(item.no)}</div>
+          <div>
+            <div class="eyebrow">${esc(projectLabel)} / ${esc(item.subtitle)}</div>
+            <h2>${esc(item.title)}</h2>
+            <div class="session-subtitle">enterprise 不再按“每课一个文件”学习，而是看模块职责、架构位置、协作边界和核心代码入口。</div>
+          </div>
+        </div>
+        <div class="session-grid">
+          <div class="session-card"><h3>模块功能</h3><p>${esc(item.knowledge)}</p></div>
+          <div class="session-card"><h3>最小心智模型</h3><p>${esc(item.model)}</p></div>
+          <div class="session-card"><h3>整体架构</h3><p>${esc(item.arch)}</p></div>
+          <div class="session-card"><h3>这一页往后长出什么</h3><p>${enterpriseHint(item.no)}</p></div>
+        </div>
+        <div class="code-ref">
+          <div class="path">${esc(item.source)}</div>
+          <code>${item.code}</code>
+        </div>
+        <aside class="notes">${esc(projectLabel)} ${esc(item.no)}：从模块职责讲起，再说明它如何承接 light-claw 的教学机制。</aside>
+      </section>`);
+    }
+
+    function nextHint(no, projectLabel) {
+      const hints = {
+        "AI-Agent-ZeroToOne": {
+          "S01": "循环能跑后，下一步自然是让模型能请求工具。",
+          "S02": "工具能跑后，长任务会跑偏，所以需要计划状态。",
+          "S03": "计划仍会污染上下文，于是需要子 Agent 隔离探索。",
+          "S04": "探索需要知识，知识不能全塞进 prompt，于是引出 Skill。",
+          "S05": "知识和工具输出会撑爆窗口，于是引出 Compact。",
+          "S06": "能行动就有风险，于是引出 Permission。",
+          "S07": "权限之外还有审计和扩展，于是引出 Hook。",
+          "S08": "一次会话之外还要记住事实，于是引出 Memory。",
+          "S09": "记忆、工具、身份都要装配，于是引出 System Prompt。",
+          "S10": "装配后仍会失败，于是引出 Error Recovery。",
+          "S11": "恢复之后，工作需要跨会话管理，于是引出 Task System。",
+          "S12": "任务会耗时，于是引出 Background Tasks。",
+          "S13": "后台任务可以被时间触发，于是引出 Cron。",
+          "S14": "一个 Agent 忙不过来，于是引出 Agent Teams。",
+          "S15": "团队协作需要协议，于是引出 Team Protocols。",
+          "S16": "协议稳定后，可以让队友自治认领任务。",
+          "S17": "自治并行改代码，需要 Worktree 隔离。",
+          "S18": "最后把外部工具生态接进来，于是引出 MCP。",
+          "S19": "这 19 课合起来，就是一个可行动、可协作、可扩展的 Agent Runtime。"
+        },
+        "OpenClaw light-claw-4j": {
+          "S01": "Loop 跑通后，下一课给模型工具能力。",
+          "S02": "工具会产生历史，于是要会话持久化和上下文保护。",
+          "S03": "会话稳定后，入口从 CLI 扩展到多平台 Channel。",
+          "S04": "多平台之后，必须把消息路由到正确 Agent。",
+          "S05": "路由稳定后，开始补人格、技能和记忆。",
+          "S06": "有记忆后，Agent 可以主动心跳和定时触发。",
+          "S07": "主动输出要可靠投递，于是引出 WAL Delivery。",
+          "S08": "投递可靠后，模型调用本身还要有 Resilience。",
+          "S09": "多来源工作会并发，于是需要命名 Lane。",
+          "S10": "这 10 课合起来，就是 Gateway 教学版。"
+        }
+      };
+      return esc((hints[projectLabel] && hints[projectLabel][no]) || "这一页把前一个概念落到更明确的工程边界。");
+    }
+
+    function enterpriseHint(no) {
+      const hints = {
+        "E01": "总包图看懂后，下一步拆开 Gateway 这条入口链路。",
+        "E02": "入口和路由稳定后，再看真正执行 Agent Loop 的核心层。",
+        "E03": "运行时能执行后，需要把提示词、技能和记忆装配成输入。",
+        "E04": "智能输入稳定后，再看多平台入口和会话记账本。",
+        "E05": "入口和会话稳定后，必须保护外部投递和模型调用失败。",
+        "E06": "可靠性兜底后，再处理 cron、heartbeat、main 的并发边界。",
+        "E07": "后台触发可控后，最后进入部署、健康检查和优雅关闭。",
+        "E08": "这 8 个模块合起来，就是把教学版 Gateway 推向生产服务。"
+      };
+      return esc(hints[no] || "这一页把前一个模块落到更明确的工程边界。");
+    }
+
+    function buildDeck() {
+      add(`<section data-part="1" class="chapter">
+        <div class="eyebrow">AI Agent Project Walkthrough</div>
+        <h1>别混着讲了：按项目把 Agent 架构走一遍</h1>
+        <p class="subtitle">重构版从 AI-Agent-ZeroToOne 开始，再到 OpenClaw light-claw-4j，最后看 enterprise-claw-4j 如何把教学机制拆成生产模块。</p>
+        <div class="chapter-line"></div>
+        <aside class="notes">开场说明：旧版按知识点融合，适合复盘；这一版按项目顺序，更适合初学者第一次建立路径。</aside>
+      </section>`);
+
+      slide("1", "今天的路线：先学 Runtime，再学 Gateway，最后看生产化",
+        `<div class="route">
+          <div class="panel"><h3>AI-Agent-ZeroToOne</h3><p><strong>先写一个会行动的 Agent。</strong>19 个 session 从 Loop、Tools、Context 到 Team、Worktree、MCP。</p></div>
+          <div class="arrow">-&gt;</div>
+          <div class="panel"><h3>OpenClaw light-claw-4j</h3><p><strong>再写一个 Agent Gateway。</strong>10 个 session 从 CLI Loop 到多渠道、路由、投递、恢复和并发。</p></div>
+          <div class="arrow">-&gt;</div>
+          <div class="panel"><h3>enterprise-claw-4j</h3><p><strong>最后看生产改造。</strong>同一套机制拆成 Spring Boot 模块、配置、健康检查和部署边界。</p></div>
+        </div>
+        <div class="takeaway"><strong>编排原则：</strong>每个项目内部按 session 顺序讲，让后一个 slide 像是从前一个自然长出来。</div>`,
+        "告诉听众本次重构的关键：不再一开始融合两个项目，而是先完整走完一个学习路径。");
+
+      slide("1", "为什么先讲 AI-Agent？因为它只问一个问题：Agent 怎么行动",
+        `<div class="layout-3">
+          <div class="panel"><h3>起点更小</h3><p>每课一个 Java 文件，不需要先理解 Gateway、平台适配或部署。</p></div>
+          <div class="panel"><h3>反馈更直接</h3><p>Loop、Tool、Context、Permission 都能在一个 REPL 里看到效果。</p></div>
+          <div class="panel"><h3>概念能累积</h3><p>从单 Agent 到多 Agent，每一课都给下一课制造真实问题。</p></div>
+        </div>
+        <div class="diagram-box">
+          <div class="diagram-row">
+            <div class="node primary"><div class="node-title">Loop</div><p>模型能转一轮</p></div>
+            <div class="node"><div class="node-title">Tools</div><p>模型能行动</p></div>
+            <div class="node primary"><div class="node-title">Context</div><p>模型能持续工作</p></div>
+            <div class="node"><div class="node-title">Safety</div><p>行动有边界</p></div>
+            <div class="node primary"><div class="node-title">Team</div><p>多个 Agent 协作</p></div>
+          </div>
+        </div>`,
+        "这页承接路线图，解释为什么按 AI-Agent 先讲。");
+
+      chapter("2", "Act I / Build The Agent Runtime", "第一幕：从 5 行循环长成一个会工作的 Agent", "AI-Agent-ZeroToOne 的 19 个 session 是一条很清楚的成长线：先让模型行动，再让它长期、可控、协作地行动。", "进入 AI-Agent 项目，不混 OpenClaw。");
+      aiSessions.forEach(item => sessionSlide("2", "AI-Agent-ZeroToOne", item));
+
+      chapter("3", "Act II / Build The Gateway", "第二幕：同一个 Agent，如何接进多平台世界", "OpenClaw light-claw-4j 不急着上 Spring Boot，而是用 10 个纯 Java session 把 Gateway 的每条工程边界讲清楚。", "进入 OpenClaw 教学项目。");
+      lightSessions.forEach(item => sessionSlide("3", "OpenClaw light-claw-4j", item));
+
+      chapter("4", "Act III / From Scripts To Services", "第三幕：生产化不是变复杂，是把边界拆清楚", "enterprise-claw-4j 把 light 版的机制拆成模块：入口、路由、运行时、智能装配、可靠性、并发、调度、部署。", "进入 enterprise。");
+      enterpriseModules.forEach(item => moduleSlide("4", "OpenClaw enterprise-claw-4j", item));
+
+      slide("5", "三条学习线终于合在一起了",
+        `<div class="stack-list">
+          <div class="stack-item"><div class="label">AI-Agent</div><div>学 Runtime</div><div>Loop、Tools、Context、Permission、Memory、Team、MCP。</div></div>
+          <div class="stack-item"><div class="label">light-claw</div><div>学 Gateway</div><div>Channels、Routing、Sessions、Delivery、Resilience、Concurrency。</div></div>
+          <div class="stack-item"><div class="label">enterprise-claw</div><div>学生产组织</div><div>Spring Boot 模块、配置、健康检查、部署和可运维边界。</div></div>
+        </div>
+        <div class="takeaway"><strong>不要把三个项目混成一锅。</strong>先按项目顺序学，最后再横向比较同一个机制在不同工程阶段的形态。</div>`,
+        "总结重构后的学习路径。");
+
+      slide("5", "复盘：同一套问题，在三个项目里逐步长大",
+        `<div class="layout-4">
+          <div class="panel"><h3>行动</h3><p>AI-Agent 用 Tool Dispatch 教模型如何行动；OpenClaw 用 Gateway 把行动接到多平台。</p></div>
+          <div class="panel"><h3>记忆</h3><p>AI-Agent 先讲 Context 与 Memory；OpenClaw 再讲 Session、PromptAssembler 和混合检索。</p></div>
+          <div class="panel"><h3>可靠</h3><p>AI-Agent 从 Permission、Hook、Recovery 起步；OpenClaw 补 WAL、Profile 轮换和 LaneQueue。</p></div>
+          <div class="panel"><h3>协作</h3><p>AI-Agent 讲团队协议；enterprise 把多 Agent、渠道、健康检查和部署纳入服务边界。</p></div>
+        </div>
+        <div class="takeaway"><strong>最终心智模型：</strong>Agent Runtime 负责行动闭环，Agent Gateway 负责接入与路由，Enterprise 架构负责长期运行。</div>`,
+        "帮助听众从项目顺序回到系统总图。");
+
+      add(`<section data-part="5" class="chapter">
+        <div class="eyebrow">Q&A</div>
+        <h2>接下来你想深入哪条线？</h2>
+        <p class="subtitle">Runtime 源码、Gateway 路由、生产模块、还是多 Agent 协作？这版 slides 的目标，是让每条线都有清晰入口。</p>
+        <div class="chapter-line"></div>
+        <aside class="notes">预留 5-8 分钟 Q&A。</aside>
+      </section>`);
+    }
+
+    function annotateSlides() {
+      const sections = Array.from(document.querySelectorAll(".reveal .slides > section"));
+      sections.forEach(function(section) {
+        const footer = document.createElement("div");
+        footer.className = "slide-footer";
+        const part = section.dataset.part || "1";
+        const index = sections.indexOf(section) + 1;
+        const left = document.createElement("span");
+        left.className = "part-label";
+        left.textContent = `Part ${part} / 5 · ${partNames[part] || ""}`;
+        const right = document.createElement("span");
+        right.textContent = `${index} / ${sections.length}`;
+        footer.append(left, right);
+        section.appendChild(footer);
+      });
+    }
+
+    function currentAccent(slide) {
+      const style = getComputedStyle(slide);
+      return style.getPropertyValue("--accent").trim() || "#c96442";
+    }
+
+    function updateProgress(event) {
+      const section = event.currentSlide || Reveal.getCurrentSlide();
+      const all = Array.from(document.querySelectorAll(".reveal .slides > section"));
+      const idx = all.indexOf(section);
+      const progress = document.querySelector(".deck-progress");
+      const pct = idx >= 0 ? ((idx + 1) / all.length) * 100 : 100;
+      progress.style.width = `${pct}%`;
+      progress.style.background = currentAccent(section);
+    }
+
+    buildDeck();
+    annotateSlides();
+
+    Reveal.initialize({
+      hash: true,
+      controls: true,
+      progress: false,
+      center: false,
+      overview: true,
+      width: 1366,
+      height: 768,
+      margin: 0.04,
+      minScale: 0.2,
+      maxScale: 1.35,
+      plugins: [ RevealNotes ]
+    }).then(function() {
+      updateProgress({ currentSlide: Reveal.getCurrentSlide() });
+    });
+
+    Reveal.on("slidechanged", updateProgress);
+    Reveal.on("ready", updateProgress);
+  </script>
+</body>
+</html>
