@@ -491,6 +491,47 @@ AI Agent 项目拆解版 HTML Slides
       font-weight: 700;
     }
 
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 34px;
+      max-width: 1160px;
+    }
+
+    .resource-card {
+      background: rgba(255, 248, 231, 0.74);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px 18px 16px;
+      min-height: 144px;
+      box-shadow: 0 14px 34px rgba(82, 60, 35, 0.08);
+    }
+
+    .resource-card h3 {
+      margin-bottom: 10px;
+    }
+
+    .resource-card p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 0.54em;
+      line-height: 1.42;
+    }
+
+    .resource-card a {
+      display: block;
+      color: var(--text);
+      font-family: var(--font-code);
+      font-size: 0.38em;
+      line-height: 1.34;
+      text-decoration: none;
+      word-break: normal;
+      overflow-wrap: anywhere;
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+    }
+
     .slide-footer {
       position: absolute;
       left: 62px;
@@ -546,6 +587,7 @@ AI Agent 项目拆解版 HTML Slides
       .mini-flow,
       .mini-lanes,
       .mini-stack,
+      .resource-grid,
       .stack-item {
         grid-template-columns: 1fr;
       }
@@ -1495,8 +1537,25 @@ AI Agent 项目拆解版 HTML Slides
         <div class="eyebrow">Q&A</div>
         <h2>接下来你想深入哪条线？</h2>
         <p class="subtitle">Runtime 源码、Gateway 路由、生产模块、还是多 Agent 协作？这版 slides 的目标，是让每条线都有清晰入口。</p>
+        <div class="resource-grid">
+          <div class="resource-card">
+            <h3>AI-Agent-ZeroToOne</h3>
+            <p>从 5 行 Agent Loop 逐步长出工具、上下文、权限、多 Agent 和 MCP。</p>
+            <a href="https://github.com/XianReallyHot-ZZH/AI-Agent-ZeroToOne">github.com/XianReallyHot-ZZH/AI-Agent-ZeroToOne</a>
+          </div>
+          <div class="resource-card">
+            <h3>OpenClaw-ZeroToOne</h3>
+            <p>从 light-claw-4j 的 Gateway 教学版，继续看到 enterprise-claw-4j 的生产化拆分。</p>
+            <a href="https://github.com/XianReallyHot-ZZH/OpenClaw-ZeroToOne">github.com/XianReallyHot-ZZH/OpenClaw-ZeroToOne</a>
+          </div>
+          <div class="resource-card">
+            <h3>GitHub 个人名片</h3>
+            <p>更多 AI Agent、vibe coding、Spring、JAVA、Ignite、Quant Trade 工程化实践与拆解内容，可以从主页继续追踪。</p>
+            <a href="https://github.com/XianReallyHot-ZZH">github.com/XianReallyHot-ZZH</a>
+          </div>
+        </div>
         <div class="chapter-line"></div>
-        <aside class="notes">预留 5-8 分钟 Q&A。</aside>
+        <aside class="notes">预留 5-8 分钟 Q&A。最后把两个子项目地址和 GitHub 个人主页留给听众课后继续阅读。</aside>
       </section>`);
     }
 
