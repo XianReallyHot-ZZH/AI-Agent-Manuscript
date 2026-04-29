@@ -16,3 +16,12 @@ git submodule add https://github.com/XianReallyHot-ZZH/OpenClaw-ZeroToOne vendor
 （3）各篇章标题要吸引人
 （4）篇章内 slides 顺序合理，后一个 slide 要像是从前一个长出来一样，逻辑路径自燃。
 旧的 slides.html 就留在那里，重构新起一个 html 文件。
+
+
+根据 slides-project-walkthrough.html 生成一份技术博客，要求：
+- 内容通俗易懂、生动有趣、图文并茂，让人有看下去的欲望
+- 博客标题要足够吸引人，让人看到就想点进博客
+- 内容质量要有保障，生动有趣的同时也要保持专业性
+- 内容也不要太长，不要给读者有负担
+- 最后可以给引用的子项目的链接，方便读者查看
+最终生成的blog 文件，以md的形式放在项目根目录下。
